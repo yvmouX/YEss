@@ -3,29 +3,27 @@ package cn.yvmou.yess.commands.main;
 import cn.yvmou.yess.YEss;
 import cn.yvmou.yess.commands.SubCommand;
 import cn.yvmou.yess.commands.main.sub.HelpCmd;
+import cn.yvmou.yess.commands.main.sub.OpenEnderChestCmd;
 import cn.yvmou.yess.commands.main.sub.ReloadCmd;
+import cn.yvmou.yess.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainCommand implements CommandExecutor {
     private final YEss plugin;
-    private Map<String, SubCommand> subCommands = new HashMap<>();
+    private final Map<String, SubCommand> subCommands = new HashMap<>();
 
     public MainCommand(YEss plugin) {
         this.plugin = plugin;
 
-        subCommands.put("help", new HelpCmd());
-        subCommands.put("reload", new ReloadCmd());
-    }
-
-
-
-    private void sendVersionMessage(CommandSender sender) {
-        sender.sendMessage("YEss version: " + plugin.getDescription().getVersion());
+        subCommands.put("help", new HelpCmd(plugin));
+        subCommands.put("reload", new ReloadCmd(plugin));
+        subCommands.put("ec", new OpenEnderChestCmd());
     }
 
     /**
@@ -41,7 +39,23 @@ public class MainCommand implements CommandExecutor {
      * @return true if a valid command, otherwise false
      */
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, Command command, String label, String[] args) {
-        return false;
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (args.length == 0) {
+            sendVersionMessage(sender);
+            return true;
+        }
+
+        SubCommand subCommand = subCommands.get(args[0]);
+
+        if (subCommand == null) {
+            CommandUtils.throwAllUsageError(sender, subCommands);
+            return true;
+        }
+
+        return subCommand.execute(sender, args);
+    }
+
+    private void sendVersionMessage(CommandSender sender) {
+        sender.sendMessage(plugin.getDescription().getName() + " version: " + plugin.getDescription().getVersion());
     }
 }

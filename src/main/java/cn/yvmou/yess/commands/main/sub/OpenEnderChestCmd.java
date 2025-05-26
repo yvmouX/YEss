@@ -1,16 +1,13 @@
 package cn.yvmou.yess.commands.main.sub;
 
-import cn.yvmou.yess.YEss;
 import cn.yvmou.yess.commands.SubCommand;
 import cn.yvmou.yess.utils.CommandUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-public class HelpCmd implements SubCommand {
-    private final YEss plugin;
-
-    public HelpCmd(YEss plugin) { this.plugin = plugin; }
-
+public class OpenEnderChestCmd implements SubCommand {
     /**
      * 执行子命令逻辑
      *
@@ -22,7 +19,18 @@ public class HelpCmd implements SubCommand {
     public boolean execute(CommandSender sender, String[] args) {
         if (CommandUtils.noPermission(sender, this)) return false;
 
-        seedHelpMessage(sender);
+        if (args.length == 2) {
+            Player target = Bukkit.getPlayerExact(args[1]);
+            if (target != null) {
+                target.openInventory(target.getEnderChest());
+            } else sender.sendMessage(ChatColor.RED + "这个玩家不在线");
+            return true;
+        }
+
+        if (CommandUtils.noPlayer(sender)) return false;
+
+        Player player = (Player) sender;
+        player.openInventory(player.getEnderChest());
         return true;
     }
 
@@ -33,7 +41,7 @@ public class HelpCmd implements SubCommand {
      */
     @Override
     public String getUsage() {
-        return "/yess help";
+        return "/yess ec <player>";
     }
 
     /**
@@ -44,13 +52,6 @@ public class HelpCmd implements SubCommand {
      */
     @Override
     public String requirePermission(CommandSender sender) {
-        return "yess.command.help";
-    }
-
-    public void seedHelpMessage(CommandSender sender) {
-        sender.sendMessage(ChatColor.GREEN + "===== " + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + " 帮助 =====");
-        sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " ec <player>");
-        sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " help");
-        sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " reload");
+        return "yess.commands.openenderchest";
     }
 }

@@ -25,5 +25,7 @@ public interface SubCommand {
      * @param sender The command sender
      * @return True if the sender has permission
      */
-    boolean hasPermission(CommandSender sender);
+    String requirePermission(CommandSender sender);
+
+
 }
