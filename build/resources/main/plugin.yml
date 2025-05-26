@@ -1,0 +1,8 @@
+name: YEss
+version: '1.0.0'
+main: cn.yvmou.yess.YEss
+api-version: '1.21'
+prefix: YEss
+authors: [yvmoux]
+description: a ess plguin
+website: www.yvmou.cn
