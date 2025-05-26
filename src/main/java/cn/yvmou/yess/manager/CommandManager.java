@@ -1,7 +1,7 @@
 package cn.yvmou.yess.manager;
 
 import cn.yvmou.yess.YEss;
-import cn.yvmou.yess.commands.main.sub.MainCommand;
+import cn.yvmou.yess.commands.main.MainCommand;
 import cn.yvmou.yess.commands.main.MainTabCompleter;
 
 import java.util.Objects;
