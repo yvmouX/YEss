@@ -3,6 +3,7 @@ package cn.yvmou.yess.commands.main;
 import cn.yvmou.yess.YEss;
 import cn.yvmou.yess.commands.SubCommand;
 import cn.yvmou.yess.commands.main.sub.HelpCmd;
+import cn.yvmou.yess.commands.main.sub.OpenCraftTable;
 import cn.yvmou.yess.commands.main.sub.OpenEnderChestCmd;
 import cn.yvmou.yess.commands.main.sub.ReloadCmd;
 import cn.yvmou.yess.utils.CommandUtils;
@@ -24,6 +25,7 @@ public class MainCommand implements CommandExecutor {
         subCommands.put("help", new HelpCmd(plugin));
         subCommands.put("reload", new ReloadCmd(plugin));
         subCommands.put("ec", new OpenEnderChestCmd());
+        subCommands.put("craft", new OpenCraftTable());
     }
 
     /**
