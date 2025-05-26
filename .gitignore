@@ -1,1 +1,7 @@
 /.idea
+/.gradle
+.gitattributes
+/build
+gradlew
+gradlew.bat
+settings.gradle
