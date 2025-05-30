@@ -3,6 +3,7 @@ package cn.yvmou.yess.commands;
 import org.bukkit.command.CommandSender;
 
 public interface SubCommand {
+    String registerCommand();
     /**
      * 执行子命令逻辑
      *
@@ -27,5 +28,10 @@ public interface SubCommand {
      */
     String requirePermission(CommandSender sender);
 
-
+    /**
+     * 是否注册命令
+     *
+     * @return 注册命令返回是，否则否
+     */
+    Boolean requireRegister();
 }

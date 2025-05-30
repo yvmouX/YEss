@@ -11,13 +11,11 @@ public class HelpCmd implements SubCommand {
 
     public HelpCmd(YEss plugin) { this.plugin = plugin; }
 
-    /**
-     * 执行子命令逻辑
-     *
-     * @param sender Command sender
-     * @param args   Arguments passed to the command
-     * @return true if successful, false otherwise
-     */
+    @Override
+    public String registerCommand() {
+        return "help";
+    }
+
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (CommandUtils.noPermission(sender, this)) return false;
@@ -26,25 +24,19 @@ public class HelpCmd implements SubCommand {
         return true;
     }
 
-    /**
-     * 提供子命令的使用说明
-     *
-     * @return A string representing command usage
-     */
     @Override
     public String getUsage() {
         return "/yess help";
     }
 
-    /**
-     * 检查发送者是否有权限使用子命令.
-     *
-     * @param sender The command sender
-     * @return True if the sender has permission
-     */
     @Override
     public String requirePermission(CommandSender sender) {
         return "yess.command.help";
+    }
+
+    @Override
+    public Boolean requireRegister() {
+        return plugin.getConfig().getBoolean("RegisterCommand.help.enable");
     }
 
     public void seedHelpMessage(CommandSender sender) {

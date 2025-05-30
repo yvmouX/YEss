@@ -8,3 +8,6 @@ settings.gradle
 /.gradle
 /.gradle
 /.gradle/buildOutputCleanup
+/.idea
+/.gradle
+/.gradle

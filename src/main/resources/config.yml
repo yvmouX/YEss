@@ -1,0 +1,14 @@
+# 该项的更改需要重启服务器才能生效
+RegisterCommand:
+  reload:
+    enable: true
+    alias: "none"
+  help:
+    enable: true
+    alias: "none"
+  craft:
+    enable: false
+    alias: "craft"
+  ec:
+    enable: false
+    alias: "ec"
