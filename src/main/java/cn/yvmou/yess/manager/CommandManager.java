@@ -7,13 +7,12 @@ import cn.yvmou.yess.commands.main.MainTabCompleter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.SimplePluginManager;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 public class CommandManager {
@@ -51,11 +50,14 @@ public class CommandManager {
             List<PluginCommand> commandsToRegister = new ArrayList<>();
 
             // 遍历配置文件中的命令
-            for (String cmd : plugin.getConfig().getConfigurationSection("RegisterCommand").getKeys(false)) {
-                String alias = plugin.getConfig().getString("RegisterCommand." + cmd + ".alias");
+            ConfigurationSection configurationSection = plugin.getConfig().getConfigurationSection("RegisterCommand");
+            if (configurationSection == null) return;
+            Set<String> allCmd = configurationSection.getKeys(false);
+            for (String cmd : allCmd) {
+                String alias = plugin.getConfig().getString("RegisterCommand." + cmd + ".alias", "none");
                 boolean enabled = plugin.getConfig().getBoolean("RegisterCommand." + cmd + ".enable", false);
 
-                if (enabled && alias != null && !alias.equals("none")) {
+                if (enabled && !alias.equals("none")) {
                     // 创建命令实例
                     PluginCommand pluginCommand = constructor.newInstance(alias, plugin);
                     pluginCommand.setExecutor(new AliasCommand(plugin, cmd));
@@ -77,26 +79,4 @@ public class CommandManager {
             e.printStackTrace();
         }
     }
-
-//    private void unregisterOldCommands() {
-//        try {
-//            Field commandMapField = SimplePluginManager.class.getDeclaredField("commandMap");
-//            commandMapField.setAccessible(true);
-//            CommandMap commandMap = (CommandMap) commandMapField.get(Bukkit.getPluginManager());
-//
-//            Field knownCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
-//            knownCommandsField.setAccessible(true);
-//            @SuppressWarnings("unchecked")
-//            Map<String, Command> knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
-//
-//            // 移除插件之前注册的命令
-//            knownCommands.entrySet().removeIf(entry -> {
-//                Command cmd = entry.getValue();
-//                return cmd instanceof PluginCommand && ((PluginCommand) cmd).getPlugin() == plugin;
-//            });
-//        } catch (Exception e) {
-//            plugin.getLogger().severe("注销旧命令时发生错误: " + e.getMessage());
-//        }
-//    }
-//
 }
