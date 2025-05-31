@@ -1,13 +1,7 @@
 /.idea
 /.gradle
-.gitattributes
 /build
+.gitattributes
 gradlew
 gradlew.bat
 settings.gradle
-/.gradle
-/.gradle
-/.gradle/buildOutputCleanup
-/.idea
-/.gradle
-/.gradle

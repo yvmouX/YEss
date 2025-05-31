@@ -34,7 +34,7 @@ public class OpenCraftTable implements SubCommand {
 
     @Override
     public String getUsage() {
-        return "/yess craft";
+        return "/yess craft <player>";
     }
 
     @Override
