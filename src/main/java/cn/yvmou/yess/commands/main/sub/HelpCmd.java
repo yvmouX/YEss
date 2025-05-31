@@ -12,11 +12,6 @@ public class HelpCmd implements SubCommand {
     public HelpCmd(YEss plugin) { this.plugin = plugin; }
 
     @Override
-    public String registerCommand() {
-        return "help";
-    }
-
-    @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (CommandUtils.noPermission(sender, this)) return false;
 

@@ -14,11 +14,6 @@ public class OpenCraftTable implements SubCommand {
     public OpenCraftTable(YEss plugin) { this.plugin = plugin; }
 
     @Override
-    public String registerCommand() {
-        return "craft";
-    }
-
-    @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (CommandUtils.noPermission(sender, this)) return false;
 

@@ -12,5 +12,5 @@ RegisterCommand:
     enable: true
     alias: "craft"
   ec:
-    enable: false
+    enable: true
     alias: "ec"

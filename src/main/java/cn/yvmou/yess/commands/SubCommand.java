@@ -3,7 +3,6 @@ package cn.yvmou.yess.commands;
 import org.bukkit.command.CommandSender;
 
 public interface SubCommand {
-    String registerCommand();
     /**
      * 执行子命令逻辑
      *

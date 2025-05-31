@@ -11,11 +11,6 @@ public class ReloadCmd implements SubCommand {
     public ReloadCmd(YEss plugin) { this.plugin = plugin; }
 
     @Override
-    public String registerCommand() {
-        return "reload";
-    }
-
-    @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (CommandUtils.noPermission(sender, this)) return false;
 
