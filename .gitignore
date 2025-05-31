@@ -1,6 +1,7 @@
 /.idea
 /.gradle
 /build
+/gradle
 .gitattributes
 gradlew
 gradlew.bat
