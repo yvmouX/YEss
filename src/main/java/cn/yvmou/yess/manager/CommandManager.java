@@ -9,6 +9,7 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.SimplePluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -23,8 +24,11 @@ public class CommandManager {
      * 注册所有命令
      */
     public void registerCommands() {
-        Objects.requireNonNull(plugin.getCommand("yess")).setExecutor(new MainCommand(plugin));
-        Objects.requireNonNull(plugin.getCommand("yess")).setTabCompleter(new MainTabCompleter(plugin));
+        // 注册主命令
+        PluginCommand pc = plugin.getCommand("yess");
+        if (pc == null) return;
+        pc.setExecutor(new MainCommand(plugin));
+        pc.setTabCompleter(new MainTabCompleter(plugin));
 
         // 注册别名命令
         Runnable r = this::registerAliasCommands;
@@ -54,17 +58,20 @@ public class CommandManager {
             if (configurationSection == null) return;
             Set<String> allCmd = configurationSection.getKeys(false);
             for (String cmd : allCmd) {
-                String alias = plugin.getConfig().getString("RegisterCommand." + cmd + ".alias", "none");
                 boolean enabled = plugin.getConfig().getBoolean("RegisterCommand." + cmd + ".enable", false);
+                String[] allAlias = plugin.getConfig().getString("RegisterCommand." + cmd + ".alias", "none").split(",");
 
-                if (enabled && !alias.equals("none")) {
-                    // 创建命令实例
-                    PluginCommand pluginCommand = constructor.newInstance(alias, plugin);
-                    pluginCommand.setExecutor(new AliasCommand(plugin, cmd));
-                    pluginCommand.setDescription("YEss plugin command alias for: " + cmd);
-                    pluginCommand.setUsage("/" + alias);
+                for (String alias : allAlias) {
+                    String a = alias.trim();
+                    if (enabled && !alias.equals("none")) {
+                        // 创建命令实例
+                        PluginCommand pluginCommand = constructor.newInstance(a, plugin);
+                        pluginCommand.setExecutor(new AliasCommand(plugin, cmd));
+                        pluginCommand.setDescription("YEss plugin command alias for: " + cmd);
+                        pluginCommand.setUsage("/" + a);
 
-                    commandsToRegister.add(pluginCommand);
+                        commandsToRegister.add(pluginCommand);
+                    }
                 }
             }
 
