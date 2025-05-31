@@ -18,8 +18,7 @@ import java.util.Map;
 
 public class MainCommand implements CommandExecutor {
     private final YEss plugin;
-    private final Map<String, SubCommand> subCommands = new HashMap<>();
-    private final Map<Boolean, SubCommand> isUseAlias  = new HashMap<>();
+    private final Map<String, SubCommand> subCommands = new HashMap<>(); // 子命令 SubCommand
 
     public MainCommand(YEss plugin) {
         this.plugin = plugin;
@@ -39,8 +38,6 @@ public class MainCommand implements CommandExecutor {
                 plugin.getLogger().info("已移除未注册命令：" + entry.getKey());
             }
         }
-
-
     }
 
     @Override

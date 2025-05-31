@@ -1,3 +1,5 @@
+Version: 1.0.0
+
 # 该项的更改需要重启服务器才能生效
 RegisterCommand:
   reload:
@@ -7,7 +9,7 @@ RegisterCommand:
     enable: true
     alias: "none"
   craft:
-    enable: false
+    enable: true
     alias: "craft"
   ec:
     enable: false
