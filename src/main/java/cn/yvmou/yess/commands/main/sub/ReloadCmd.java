@@ -26,7 +26,7 @@ public class ReloadCmd implements SubCommand {
 
     @Override
     public String requirePermission(CommandSender sender) {
-        return "yess.command.reload";
+        return plugin.getConfig().getString("RegisterCommand.reload.permission", null);
     }
 
     @Override

@@ -26,7 +26,7 @@ public class HelpCmd implements SubCommand {
 
     @Override
     public String requirePermission(CommandSender sender) {
-        return "yess.command.help";
+        return plugin.getConfig().getString("RegisterCommand.help.permission", null);
     }
 
     @Override
@@ -36,9 +36,10 @@ public class HelpCmd implements SubCommand {
 
     public void seedHelpMessage(CommandSender sender) {
         sender.sendMessage(ChatColor.GREEN + "===== " + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + " 帮助 =====");
-        sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " help <player>");
-        sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " ec <player>");
         sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " help");
         sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " reload");
+        sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " craft <player>");
+        sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " ec <player>");
+        sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " glow <player>");
     }
 }

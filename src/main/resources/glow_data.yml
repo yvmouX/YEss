@@ -1,0 +1,3 @@
+# 发光玩家数据存储
+# 格式：玩家UUID列表
+glowing-players: []

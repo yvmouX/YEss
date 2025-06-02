@@ -39,7 +39,7 @@ public class OpenEnderChestCmd implements SubCommand {
 
     @Override
     public String requirePermission(CommandSender sender) {
-        return "yess.commands.openenderchest";
+        return plugin.getConfig().getString("RegisterCommand.ec.permission", null);
     }
 
     @Override

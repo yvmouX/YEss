@@ -2,10 +2,7 @@ package cn.yvmou.yess.commands.main;
 
 import cn.yvmou.yess.YEss;
 import cn.yvmou.yess.commands.SubCommand;
-import cn.yvmou.yess.commands.main.sub.HelpCmd;
-import cn.yvmou.yess.commands.main.sub.OpenCraftTable;
-import cn.yvmou.yess.commands.main.sub.OpenEnderChestCmd;
-import cn.yvmou.yess.commands.main.sub.ReloadCmd;
+import cn.yvmou.yess.commands.main.sub.*;
 import cn.yvmou.yess.utils.CommandUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,7 +23,8 @@ public class MainCommand implements CommandExecutor {
         subCommands.put("help", new HelpCmd(plugin));
         subCommands.put("reload", new ReloadCmd(plugin));
         subCommands.put("ec", new OpenEnderChestCmd(plugin));
-        subCommands.put("craft", new OpenCraftTable(plugin));
+        subCommands.put("craft", new OpenCraftCmd(plugin));
+        subCommands.put("glow", new GlowCmd(plugin));
 
         // 迭代器
         // 移除未注册命令

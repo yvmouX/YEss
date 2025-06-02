@@ -8,10 +8,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class OpenCraftTable implements SubCommand {
+public class OpenCraftCmd implements SubCommand {
     private final YEss plugin;
 
-    public OpenCraftTable(YEss plugin) { this.plugin = plugin; }
+    public OpenCraftCmd(YEss plugin) { this.plugin = plugin; }
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
@@ -39,7 +39,7 @@ public class OpenCraftTable implements SubCommand {
 
     @Override
     public String requirePermission(CommandSender sender) {
-        return "yess.command.craft";
+        return plugin.getConfig().getString("RegisterCommand.craft.permission", null);
     }
 
     @Override
