@@ -1,7 +1,7 @@
-package cn.yvmou.yess.manager;
+package cn.yvmou.yess.utils.manager;
 
 import cn.yvmou.yess.YEss;
-import cn.yvmou.yess.commands.main.AliasCommand;
+import cn.yvmou.yess.commands.AliasCommand;
 import cn.yvmou.yess.commands.main.MainCommand;
 import cn.yvmou.yess.commands.main.MainTabCompleter;
 import org.bukkit.Bukkit;
@@ -9,12 +9,10 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.SimplePluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.Callable;
 
 public class CommandManager {
     private final YEss plugin;

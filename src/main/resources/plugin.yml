@@ -6,6 +6,7 @@ prefix: YEss
 authors: [yvmoux]
 description: a ess plguin
 website: www.yvmou.cn
+softdepend: ["PlaceholderAPI"]
 folia-supported: true
 commands:
   yess:

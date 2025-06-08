@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class SQLiteGlowStorage implements GlowStorage {
+public class SQLiteGlowStorage implements PluginStorage {
     private final YEss plugin;
     private Connection connection;
 

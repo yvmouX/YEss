@@ -52,11 +52,11 @@ public class GlowCmd implements SubCommand {
 
     private void glowToggle(Player player) {
         UUID playerId = player.getUniqueId();
-        boolean currentlyGlowing = plugin.getGlowStorage().isGlowing(playerId);
+        boolean currentlyGlowing = YEss.getPluginStorage().isGlowing(playerId);
 
         if (currentlyGlowing) {
             player.removePotionEffect(PotionEffectType.GLOWING);
-            plugin.getGlowStorage().setGlowing(playerId, false);
+            YEss.getPluginStorage().setGlowing(playerId, false);
             player.sendMessage(ChatColor.RED + "发光效果已移除!");
         } else {
             player.addPotionEffect(
@@ -69,7 +69,7 @@ public class GlowCmd implements SubCommand {
                             true
                     )
             );
-            plugin.getGlowStorage().setGlowing(playerId, true);
+            YEss.getPluginStorage().setGlowing(playerId, true);
             player.sendMessage(ChatColor.RED + "你获得了发光效果");
         }
     }

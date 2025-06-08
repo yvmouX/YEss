@@ -6,38 +6,14 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 
-public class PlayerListener implements Listener {
+public class PortalListener implements Listener {
     private final YEss plugin;
 
-    public PlayerListener(YEss plugin) { this.plugin = plugin; }
-
-    /**
-     * 玩家进入游戏时给予光芒效果
-     *
-     * @param event
-     */
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        if (plugin.getGlowStorage().isGlowing(player.getUniqueId())) {
-            player.addPotionEffect(new PotionEffect(
-                    PotionEffectType.GLOWING,
-                    Integer.MAX_VALUE,
-                    0,
-                    false,
-                    false,
-                    true
-            ));
-        }
-    }
-
+    public PortalListener(YEss plugin) { this.plugin = plugin; }
     /**
      * 检测玩家位置执行命令
      *

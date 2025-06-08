@@ -1,14 +1,14 @@
 package cn.yvmou.yess;
 
-import cn.yvmou.yess.events.PlayerListener;
+import cn.yvmou.yess.managers.GiftManager;
 import cn.yvmou.yess.expansion.PapiExpansion;
-import cn.yvmou.yess.manager.CommandManager;
-import cn.yvmou.yess.storage.GlowStorage;
+import cn.yvmou.yess.utils.manager.CommandManager;
+import cn.yvmou.yess.storage.PluginStorage;
 import cn.yvmou.yess.storage.StorageFactory;
+import cn.yvmou.yess.utils.manager.ListenerManager;
 import com.tcoded.folialib.FoliaLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -16,25 +16,30 @@ import java.util.logging.Logger;
 public final class YEss extends JavaPlugin {
     private final Logger logger = getLogger();
     private static FoliaLib foliaLib;
-    private GlowStorage glowStorage;
+    private static PluginStorage pluginStorage;
+    private static GiftManager giftManager;
 
     public static FoliaLib getFoliaLib() {return foliaLib;}
-    public GlowStorage getGlowStorage() {
-        return glowStorage;
-    }
+    public static PluginStorage getPluginStorage() {return pluginStorage;}
+    public static GiftManager getGiftManager() {return giftManager;}
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
+
         // 初始化
         foliaLib = new FoliaLib(this);
-        glowStorage = StorageFactory.createStorage(this);
-        glowStorage.init();
-        // 注册命令
+
+        pluginStorage = StorageFactory.createStorage(this); // 初始化插件存储
+
+        giftManager = new GiftManager(this); // 初始化礼包管理器
+
+        // 注册命令和事件
         new CommandManager(this).registerCommands();
-        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        new ListenerManager(this).registerListener();
+
         // HOOK
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { //
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new PapiExpansion(this).register(); //
             logger.info(ChatColor.BLUE + "成功挂钩PlaceholderAPI");
         }
@@ -45,9 +50,8 @@ public final class YEss extends JavaPlugin {
     @Override
     public void onDisable() {
         // 关闭存储系统
-        if (glowStorage != null) {glowStorage.shutdown();}
+        if (pluginStorage != null) {pluginStorage.shutdown();}
 
         logger.info(ChatColor.RED + "插件卸载成功！");
     }
-
 }

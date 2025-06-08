@@ -25,6 +25,7 @@ public class MainCommand implements CommandExecutor {
         subCommands.put("ec", new OpenEnderChestCmd(plugin));
         subCommands.put("craft", new OpenCraftCmd(plugin));
         subCommands.put("glow", new GlowCmd(plugin));
+        subCommands.put("gift", new GiftCommand(plugin));
 
         // 迭代器
         // 移除未注册命令

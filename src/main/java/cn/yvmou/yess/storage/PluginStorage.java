@@ -3,7 +3,7 @@ package cn.yvmou.yess.storage;
 import java.util.Set;
 import java.util.UUID;
 
-public interface GlowStorage {
+public interface PluginStorage {
     /**
      * 初始化存储系统
      */

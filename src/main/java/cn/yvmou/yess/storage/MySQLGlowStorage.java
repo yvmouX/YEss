@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class MySQLGlowStorage implements GlowStorage {
+public class MySQLGlowStorage implements PluginStorage {
     private final YEss plugin;
     private Connection connection;
 

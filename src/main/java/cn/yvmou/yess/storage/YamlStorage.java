@@ -9,27 +9,36 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class YamlGlowStorage implements GlowStorage {
+public class YamlStorage implements PluginStorage {
     private final YEss plugin;
     private YamlConfiguration dataConfig;
+    private File dataFolder;
     private File dataFile;
 
-    public YamlGlowStorage(YEss plugin) {
+    public YamlStorage(YEss plugin) {
         this.plugin = plugin;
+        this.init();
     }
 
     @Override
     public void init() {
-        dataFile = new File(plugin.getDataFolder(), "glow_data.yml");
-        if (!dataFile.exists()) {
-            plugin.saveResource("glow_data.yml", false);
+        dataFolder = new File(plugin.getDataFolder(), "data");
+        if (!dataFolder.exists()) {
+            dataFolder.mkdirs();
         }
+
+        dataFile = new File(dataFolder, "data.yml");
+
         dataConfig = YamlConfiguration.loadConfiguration(dataFile);
+        try {
+            dataConfig.save(dataFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void shutdown() {
-
     }
 
     @Override

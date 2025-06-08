@@ -1,4 +1,4 @@
-package cn.yvmou.yess.commands.main;
+package cn.yvmou.yess.commands;
 
 import cn.yvmou.yess.YEss;
 import org.bukkit.command.Command;
