@@ -12,6 +12,9 @@
 - /yess glow <player>
   - yess.command.glow
 
+- /yess gift <create|edit|give|help>
+  - yess.command.gift
+
 - /yess help
   - yess.command.help
 - /yess reload
@@ -44,10 +47,14 @@ RegisterCommand:
     enable: true
     alias: "glow"
     permission: "yess.command.glow"
+  gift:
+    enable: true
+    alias: "gift"
+    permission: "yess.command.gift"
 
 # 存储类型: yaml, mysql 或 sqlite
 storage:
-  type: "yaml"  # 默认使用yaml
+  type: "yaml"  # 目前仅支持yaml，填写其他类型无效
 
   # MySQL配置 (当storage.type=mysql时使用)
   mysql:
