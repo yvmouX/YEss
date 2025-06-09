@@ -5,6 +5,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 public class SchedulerUtils {
+    public static boolean isFolia() {
+        return YEss.getFoliaLib().isFolia();
+    }
     public static void runTask(Plugin plugin, Runnable runnable) {
         if (YEss.getFoliaLib().isFolia()) {
             YEss.getFoliaLib().getScheduler().runNextTick(wrappedTask -> runnable.run());
@@ -60,6 +63,4 @@ public class SchedulerUtils {
             Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, runnable, delay, period);
         }
     }
-
-
 }
