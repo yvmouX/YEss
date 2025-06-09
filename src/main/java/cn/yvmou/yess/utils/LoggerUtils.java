@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 
 public class LoggerUtils {
     public static final CommandSender console = Bukkit.getConsoleSender();
-    private static final String CONSOLE_PREFIX = "§8[" + Y.getInstance().getDescription().getPrefix() + "]§r ";
+    private static final String CONSOLE_PREFIX = "§8[" + "§b§l§n" + Y.getInstance().getDescription().getPrefix() + "]§r ";
 
     public static void info(String msg) {
         info(ChatColor.GREEN, msg); // 默认使用绿色
