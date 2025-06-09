@@ -42,12 +42,12 @@ public class GlowCmd implements SubCommand {
 
     @Override
     public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("registerCommand.reload.permission", null);
+        return plugin.getConfig().getString("registerCommand.reload.permission", "yess.command.reload");
     }
 
     @Override
     public Boolean requireRegister() {
-        return plugin.getConfig().getBoolean("registerCommand.glow.enable");
+        return plugin.getConfig().getBoolean("registerCommand.glow.enable", true);
     }
 
     private void glowToggle(Player player) {

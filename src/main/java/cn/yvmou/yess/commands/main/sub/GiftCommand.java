@@ -137,7 +137,7 @@ public class GiftCommand implements SubCommand {
      */
     @Override
     public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("registerCommand.gift.permission");
+        return plugin.getConfig().getString("registerCommand.gift.permission", "yess.command.gift");
     }
 
     /**
@@ -147,7 +147,7 @@ public class GiftCommand implements SubCommand {
      */
     @Override
     public Boolean requireRegister() {
-        return plugin.getConfig().getBoolean("registerCommand.gift.enable");
+        return plugin.getConfig().getBoolean("registerCommand.gift.enable", true);
     }
 
     private void sendHelp(Player player) {

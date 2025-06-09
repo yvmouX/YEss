@@ -36,7 +36,6 @@ public final class Y extends JavaPlugin {
 
         giftManager = new GiftManager(this); // 初始化礼包管理器
 
-        // 注册命令和事件
         new CommandManager(this).registerCommands();
         new ListenerManager(this).registerListener();
 

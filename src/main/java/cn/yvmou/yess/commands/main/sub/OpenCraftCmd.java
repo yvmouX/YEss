@@ -39,11 +39,11 @@ public class OpenCraftCmd implements SubCommand {
 
     @Override
     public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("registerCommand.craft.permission", null);
+        return plugin.getConfig().getString("registerCommand.craft.permission", "yess.command.craft");
     }
 
     @Override
     public Boolean requireRegister() {
-        return plugin.getConfig().getBoolean("registerCommand.craft.enable");
+        return plugin.getConfig().getBoolean("registerCommand.craft.enable", true);
     }
 }

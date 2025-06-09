@@ -26,12 +26,12 @@ public class HelpCmd implements SubCommand {
 
     @Override
     public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("registerCommand.help.permission", null);
+        return plugin.getConfig().getString("registerCommand.help.permission", "yess.command.help");
     }
 
     @Override
     public Boolean requireRegister() {
-        return plugin.getConfig().getBoolean("registerCommand.help.enable");
+        return plugin.getConfig().getBoolean("registerCommand.help.enable", false);
     }
 
     public void seedHelpMessage(CommandSender sender) {
