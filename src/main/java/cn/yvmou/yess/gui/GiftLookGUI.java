@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class GiftEditGUI {
+public class GiftLookGUI {
     private Inventory inventory;
     private String giftName;
 
@@ -22,19 +22,15 @@ public class GiftEditGUI {
      */
     public void init(String giftName) {
         this.giftName = giftName;
-        inventory = Bukkit.createInventory(null, 54, "§6编辑礼包: " + giftName);
+        inventory = Bukkit.createInventory(null, 54, "§6预览礼包: " + giftName);
         // 加载已保存的物品
         List<ItemStack> savedItems = YEss.getGiftManager().loadGiftItems(giftName);
         for (int i = 0; i < savedItems.size() && i < 45; i++) {
             inventory.setItem(i, savedItems.get(i));
         }
         // 添加控制按钮
-        ItemStack saveButton = GUIUtils.createButton(Material.EMERALD_BLOCK, "§a保存礼包", "§7点击保存当前礼包内容");
-        ItemStack cancelButton = GUIUtils.createButton(Material.REDSTONE_BLOCK, "§c取消", "§7点击取消编辑");
-        ItemStack clearButton = GUIUtils.createButton(Material.BARRIER, "§c清空礼包", "§7点击清空所有物品");
-        inventory.setItem(49, saveButton);
-        inventory.setItem(45, cancelButton);
-        inventory.setItem(53, clearButton);
+        ItemStack cancelButton = GUIUtils.createButton(Material.REDSTONE_BLOCK, "§c关闭", "§7点击取消编辑");
+        inventory.setItem(49, cancelButton);
     }
 
     /**
@@ -44,5 +40,6 @@ public class GiftEditGUI {
     public void open(Player player) {
         player.openInventory(inventory);
     }
+
 
 }

@@ -2,7 +2,10 @@ package cn.yvmou.yess.managers;
 
 import cn.yvmou.yess.YEss;
 import cn.yvmou.yess.gui.GiftEditGUI;
+import cn.yvmou.yess.gui.GiftLookGUI;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
@@ -13,17 +16,23 @@ import java.util.List;
 public class GiftManager {
     private final YEss plugin;
     private final GiftEditGUI giftEditGUI;
+    private final GiftLookGUI giftLookGUI;
     private final List<ItemStack> items = new ArrayList<>();
     private File giftsFolder;
 
     public GiftManager(YEss plugin) {
         this.plugin = plugin;
         this.giftEditGUI = new GiftEditGUI();
+        this.giftLookGUI = new GiftLookGUI();
         this.init();
     }
 
-    public List<ItemStack> getItems() { return items; }
+    public List<ItemStack> getItems() {
+        items.clear();
+        return items;
+    }
     public GiftEditGUI getGiftEditGUI() { return giftEditGUI; }
+    public GiftLookGUI getGiftLookGUI() { return giftLookGUI; }
 
     private void init() {
         giftsFolder = new File(plugin.getDataFolder(), "gifts");
@@ -93,6 +102,15 @@ public class GiftManager {
         }
     }
 
+    public void deleteGift(String name, Player p) {
+        File giftFile = new File(giftsFolder, name + ".yml");
+        if (giftFile.exists()) {
+            if (giftFile.delete()) {
+                p.sendMessage(ChatColor.RED + "礼包删除成功");
+            }
+        } else p.sendMessage(ChatColor.RED + "礼包删除失败");
+    }
+
     /**
      *
      * @param name 礼包名称
@@ -122,7 +140,9 @@ public class GiftManager {
      * @param name 礼包名称
      * @return ItemStack
      */
-    public ItemStack getGiftItem(String name) {
+    public List<ItemStack> getGiftItem(String name) {
+        items.clear();
+
         File giftFile = new File(giftsFolder, name + ".yml");
         if (!giftFile.exists()) {
             return null;
@@ -130,7 +150,12 @@ public class GiftManager {
 
         YamlConfiguration config = YamlConfiguration.loadConfiguration(giftFile);
 
-        return config.getItemStack("items.0");
+        for (String key : config.getConfigurationSection("items").getKeys(false)) {
+            ItemStack itemStack = config.getItemStack("items." + key);
+            items.add(itemStack);
+        }
+
+        return items;
     }
 
     /**

@@ -3,6 +3,8 @@ package cn.yvmou.yess.commands.main.sub;
 import cn.yvmou.yess.YEss;
 import cn.yvmou.yess.commands.SubCommand;
 import cn.yvmou.yess.utils.CommandUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -32,17 +34,17 @@ public class GiftCommand implements SubCommand {
 
         if (args.length < 2) {
             sendHelp(player);
-            return true;
+            return false;
         }
 
         String subCommand = args[1].toLowerCase();
-        String giftName = args.length == 3 ? args[2] : "";
+        String giftName = args.length > 3 ? args[2] : "";
 
         switch (subCommand) {
             case "create" -> {
                 if (giftName.isEmpty()) {
                     player.sendMessage("§c请输入礼包名称！");
-                    return true;
+                    return false;
                 }
                 if (YEss.getGiftManager().createGift(giftName)) {
                     player.sendMessage("§a成功创建礼包：" + giftName);
@@ -53,7 +55,7 @@ public class GiftCommand implements SubCommand {
             case "edit" -> {
                 if (giftName.isEmpty()) {
                     player.sendMessage("§c请输入礼包名称！");
-                    return true;
+                    return false;
                 }
                 if (YEss.getGiftManager().existsGift(giftName)) {
                     YEss.getGiftManager().getGiftEditGUI().init(giftName);
@@ -71,9 +73,44 @@ public class GiftCommand implements SubCommand {
                     gifts.forEach(gift -> player.sendMessage("§7- " + gift));
                 }
             }
+            case "get" -> {
+                if (giftName.isEmpty()) {
+                    player.sendMessage("§c请输入礼包名称！");
+                    return false;
+                }
+                for (ItemStack item : YEss.getGiftManager().getGiftItem(giftName)) {
+                    player.getInventory().addItem(item);
+                }
+            }
             case "give" -> {
-                ItemStack itemStack = YEss.getGiftManager().getGiftItem(giftName);
-                player.getInventory().addItem(itemStack);
+                if (giftName.isEmpty()) {
+                    player.sendMessage("§c请输入礼包名称！");
+                    return false;
+                }
+                Player target = Bukkit.getPlayerExact(args[3]);
+                if (target != null) {
+                    for (ItemStack item : YEss.getGiftManager().getGiftItem(giftName)) {
+                        target.getInventory().addItem(item);
+                    }
+                } else sender.sendMessage(ChatColor.RED + "这个玩家不在线");
+            }
+            case "look" -> {
+                if (giftName.isEmpty()) {
+                    player.sendMessage("§c请输入礼包名称！");
+                    return false;
+                }
+                Player target = Bukkit.getPlayerExact(args[3]);
+                if (target != null) {
+                    YEss.getGiftManager().getGiftLookGUI().init(giftName);
+                    YEss.getGiftManager().getGiftLookGUI().open(target);
+                } else sender.sendMessage(ChatColor.RED + "这个玩家不在线");
+            }
+            case "delete" -> {
+                if (giftName.isEmpty()) {
+                    player.sendMessage("§c请输入礼包名称！");
+                    return false;
+                }
+                YEss.getGiftManager().deleteGift(giftName, player);
             }
             case "help" -> sendHelp(player);
             default -> sender.sendMessage(getUsage());
@@ -117,6 +154,10 @@ public class GiftCommand implements SubCommand {
         player.sendMessage("§6=== 礼包命令帮助 ===");
         player.sendMessage("§f/yess gift create <名称> §7- 创建礼包");
         player.sendMessage("§f/yess gift edit <名称> §7- 编辑礼包");
+        player.sendMessage("§f/yess gift get <名称> §7- 获取礼包");
+        player.sendMessage("§f/yess gift give <名称> <玩家> §7- 给予玩家礼包");
+        player.sendMessage("§f/yess gift look <名称> <玩家> §7- 预览");
+        player.sendMessage("§f/yess gift delete <名称> §7- 预览");
         player.sendMessage("§f/yess gift list §7- 查看礼包列表");
     }
 
