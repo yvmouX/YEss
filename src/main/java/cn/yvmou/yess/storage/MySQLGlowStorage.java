@@ -1,6 +1,6 @@
 package cn.yvmou.yess.storage;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 
 import java.sql.*;
 import java.util.HashSet;
@@ -8,10 +8,10 @@ import java.util.Set;
 import java.util.UUID;
 
 public class MySQLGlowStorage implements PluginStorage {
-    private final YEss plugin;
+    private final Y plugin;
     private Connection connection;
 
-    public MySQLGlowStorage(YEss plugin) {
+    public MySQLGlowStorage(Y plugin) {
         this.plugin = plugin;
     }
 

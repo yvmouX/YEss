@@ -1,6 +1,6 @@
 package cn.yvmou.yess.commands.main.sub;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import cn.yvmou.yess.commands.SubCommand;
 import cn.yvmou.yess.utils.CommandUtils;
 import org.bukkit.Bukkit;
@@ -9,9 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class OpenEnderChestCmd implements SubCommand {
-    private final YEss plugin;
+    private final Y plugin;
 
-    public OpenEnderChestCmd(YEss plugin) { this.plugin = plugin; }
+    public OpenEnderChestCmd(Y plugin) { this.plugin = plugin; }
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
@@ -39,11 +39,11 @@ public class OpenEnderChestCmd implements SubCommand {
 
     @Override
     public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("RegisterCommand.ec.permission", null);
+        return plugin.getConfig().getString("registerCommand.ec.permission", null);
     }
 
     @Override
     public Boolean requireRegister() {
-        return plugin.getConfig().getBoolean("RegisterCommand.ec.enable");
+        return plugin.getConfig().getBoolean("registerCommand.ec.enable");
     }
 }

@@ -1,6 +1,6 @@
 package cn.yvmou.yess.managers;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import cn.yvmou.yess.gui.GiftEditGUI;
 import cn.yvmou.yess.gui.GiftLookGUI;
 import org.bukkit.ChatColor;
@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GiftManager {
-    private final YEss plugin;
+    private final Y plugin;
     private final GiftEditGUI giftEditGUI;
     private final GiftLookGUI giftLookGUI;
     private final List<ItemStack> items = new ArrayList<>();
     private File giftsFolder;
 
-    public GiftManager(YEss plugin) {
+    public GiftManager(Y plugin) {
         this.plugin = plugin;
         this.giftEditGUI = new GiftEditGUI();
         this.giftLookGUI = new GiftLookGUI();

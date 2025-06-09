@@ -1,6 +1,6 @@
 package cn.yvmou.yess.commands.main.sub;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import cn.yvmou.yess.commands.SubCommand;
 import cn.yvmou.yess.utils.CommandUtils;
 import org.bukkit.Bukkit;
@@ -13,9 +13,9 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.UUID;
 
 public class GlowCmd implements SubCommand {
-    private final YEss plugin;
+    private final Y plugin;
 
-    public GlowCmd(YEss plugin) { this.plugin = plugin; }
+    public GlowCmd(Y plugin) { this.plugin = plugin; }
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
@@ -42,21 +42,21 @@ public class GlowCmd implements SubCommand {
 
     @Override
     public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("RegisterCommand.reload.permission", null);
+        return plugin.getConfig().getString("registerCommand.reload.permission", null);
     }
 
     @Override
     public Boolean requireRegister() {
-        return plugin.getConfig().getBoolean("RegisterCommand.glow.enable");
+        return plugin.getConfig().getBoolean("registerCommand.glow.enable");
     }
 
     private void glowToggle(Player player) {
         UUID playerId = player.getUniqueId();
-        boolean currentlyGlowing = YEss.getPluginStorage().isGlowing(playerId);
+        boolean currentlyGlowing = Y.getPluginStorage().isGlowing(playerId);
 
         if (currentlyGlowing) {
             player.removePotionEffect(PotionEffectType.GLOWING);
-            YEss.getPluginStorage().setGlowing(playerId, false);
+            Y.getPluginStorage().setGlowing(playerId, false);
             player.sendMessage(ChatColor.RED + "发光效果已移除!");
         } else {
             player.addPotionEffect(
@@ -69,7 +69,7 @@ public class GlowCmd implements SubCommand {
                             true
                     )
             );
-            YEss.getPluginStorage().setGlowing(playerId, true);
+            Y.getPluginStorage().setGlowing(playerId, true);
             player.sendMessage(ChatColor.RED + "你获得了发光效果");
         }
     }

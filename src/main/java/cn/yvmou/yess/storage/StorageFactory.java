@@ -1,9 +1,9 @@
 package cn.yvmou.yess.storage;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 
 public class StorageFactory {
-    public static PluginStorage createStorage(YEss plugin) {
+    public static PluginStorage createStorage(Y plugin) {
         String storageType = plugin.getConfig().getString("storage.type", "yaml").toLowerCase();
 
         return switch (storageType) {

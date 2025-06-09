@@ -1,6 +1,6 @@
 package cn.yvmou.yess.events;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,7 +17,7 @@ public class GlowListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-        if (YEss.getPluginStorage().isGlowing(player.getUniqueId())) {
+        if (Y.getPluginStorage().isGlowing(player.getUniqueId())) {
             player.addPotionEffect(new PotionEffect(
                     PotionEffectType.GLOWING,
                     Integer.MAX_VALUE,

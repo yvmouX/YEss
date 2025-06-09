@@ -1,15 +1,15 @@
 package cn.yvmou.yess.commands.main.sub;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import cn.yvmou.yess.commands.SubCommand;
 import cn.yvmou.yess.utils.CommandUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class HelpCmd implements SubCommand {
-    private final YEss plugin;
+    private final Y plugin;
 
-    public HelpCmd(YEss plugin) { this.plugin = plugin; }
+    public HelpCmd(Y plugin) { this.plugin = plugin; }
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
@@ -26,12 +26,12 @@ public class HelpCmd implements SubCommand {
 
     @Override
     public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("RegisterCommand.help.permission", null);
+        return plugin.getConfig().getString("registerCommand.help.permission", null);
     }
 
     @Override
     public Boolean requireRegister() {
-        return plugin.getConfig().getBoolean("RegisterCommand.help.enable");
+        return plugin.getConfig().getBoolean("registerCommand.help.enable");
     }
 
     public void seedHelpMessage(CommandSender sender) {
@@ -41,5 +41,6 @@ public class HelpCmd implements SubCommand {
         sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " craft <player>");
         sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " ec <player>");
         sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " glow <player>");
+        sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " gift <create|edit|delete|give|help>");
     }
 }

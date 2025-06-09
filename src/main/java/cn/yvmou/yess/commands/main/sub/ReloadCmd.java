@@ -1,14 +1,14 @@
 package cn.yvmou.yess.commands.main.sub;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import cn.yvmou.yess.commands.SubCommand;
 import cn.yvmou.yess.utils.CommandUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class ReloadCmd implements SubCommand {
-    private final YEss plugin;
-    public ReloadCmd(YEss plugin) { this.plugin = plugin; }
+    private final Y plugin;
+    public ReloadCmd(Y plugin) { this.plugin = plugin; }
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
@@ -26,11 +26,11 @@ public class ReloadCmd implements SubCommand {
 
     @Override
     public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("RegisterCommand.reload.permission", null);
+        return plugin.getConfig().getString("registerCommand.reload.permission", null);
     }
 
     @Override
     public Boolean requireRegister() {
-        return plugin.getConfig().getBoolean("RegisterCommand.reload.enable");
+        return plugin.getConfig().getBoolean("registerCommand.reload.enable");
     }
 }

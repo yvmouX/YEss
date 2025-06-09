@@ -1,15 +1,15 @@
 package cn.yvmou.yess.expansion;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 public class PapiExpansion extends PlaceholderExpansion {
 
-    private final YEss plugin;
+    private final Y plugin;
 
-    public PapiExpansion(YEss plugin) {
+    public PapiExpansion(Y plugin) {
         this.plugin = plugin;
     }
 
@@ -31,7 +31,7 @@ public class PapiExpansion extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
         if (params.equalsIgnoreCase("glow_status")) {
-            return YEss.getPluginStorage().isGlowing(player.getUniqueId()) ? "on" : "off";
+            return Y.getPluginStorage().isGlowing(player.getUniqueId()) ? "on" : "off";
         }
         return null;
     }

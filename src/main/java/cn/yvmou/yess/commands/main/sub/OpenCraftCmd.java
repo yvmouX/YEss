@@ -1,6 +1,6 @@
 package cn.yvmou.yess.commands.main.sub;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import cn.yvmou.yess.commands.SubCommand;
 import cn.yvmou.yess.utils.CommandUtils;
 import org.bukkit.Bukkit;
@@ -9,9 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class OpenCraftCmd implements SubCommand {
-    private final YEss plugin;
+    private final Y plugin;
 
-    public OpenCraftCmd(YEss plugin) { this.plugin = plugin; }
+    public OpenCraftCmd(Y plugin) { this.plugin = plugin; }
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
@@ -39,11 +39,11 @@ public class OpenCraftCmd implements SubCommand {
 
     @Override
     public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("RegisterCommand.craft.permission", null);
+        return plugin.getConfig().getString("registerCommand.craft.permission", null);
     }
 
     @Override
     public Boolean requireRegister() {
-        return plugin.getConfig().getBoolean("RegisterCommand.craft.enable");
+        return plugin.getConfig().getBoolean("registerCommand.craft.enable");
     }
 }

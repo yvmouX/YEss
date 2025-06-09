@@ -1,14 +1,14 @@
 package cn.yvmou.yess.utils.manager;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import cn.yvmou.yess.events.GiftGUIListener;
 import cn.yvmou.yess.events.GlowListener;
 import cn.yvmou.yess.events.PortalListener;
 
 public class ListenerManager {
-    private final YEss plugin;
+    private final Y plugin;
 
-    public ListenerManager(YEss plugin) { this.plugin = plugin; }
+    public ListenerManager(Y plugin) { this.plugin = plugin; }
 
     public void registerListener() {
         plugin.getServer().getPluginManager().registerEvents(new GlowListener(), plugin);

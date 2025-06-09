@@ -1,6 +1,6 @@
 package cn.yvmou.yess.commands.main;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -10,9 +10,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MainTabCompleter implements TabCompleter {
-    private final YEss plugin;
+    private final Y plugin;
 
-    public MainTabCompleter(YEss plugin) { this.plugin = plugin; }
+    public MainTabCompleter(Y plugin) { this.plugin = plugin; }
 
 
     /**

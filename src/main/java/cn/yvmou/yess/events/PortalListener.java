@@ -1,6 +1,6 @@
 package cn.yvmou.yess.events;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -11,9 +11,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import java.util.List;
 
 public class PortalListener implements Listener {
-    private final YEss plugin;
+    private final Y plugin;
 
-    public PortalListener(YEss plugin) { this.plugin = plugin; }
+    public PortalListener(Y plugin) { this.plugin = plugin; }
     /**
      * 检测玩家位置执行命令
      *
@@ -31,8 +31,8 @@ public class PortalListener implements Listener {
             try {
                 for (String cmd : command) {
                     String finalCmd = cmd.replace("%player%", playerName);
-                    if (YEss.getFoliaLib().isFolia()) {
-                        YEss.getFoliaLib().getScheduler().runNextTick(wrappedTask -> {
+                    if (Y.getFoliaLib().isFolia()) {
+                        Y.getFoliaLib().getScheduler().runNextTick(wrappedTask -> {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCmd);
                         });
                     } else {

@@ -1,6 +1,6 @@
 package cn.yvmou.yess.commands.main.sub;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import cn.yvmou.yess.commands.SubCommand;
 import cn.yvmou.yess.utils.CommandUtils;
 import org.bukkit.Bukkit;
@@ -12,9 +12,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class GiftCommand implements SubCommand {
-    private final YEss plugin;
+    private final Y plugin;
 
-    public GiftCommand(YEss plugin) {
+    public GiftCommand(Y plugin) {
         this.plugin = plugin;
     }
 
@@ -46,7 +46,7 @@ public class GiftCommand implements SubCommand {
                     player.sendMessage("§c请输入礼包名称！");
                     return false;
                 }
-                if (YEss.getGiftManager().createGift(giftName)) {
+                if (Y.getGiftManager().createGift(giftName)) {
                     player.sendMessage("§a成功创建礼包：" + giftName);
                 } else {
                     player.sendMessage("§c礼包已存在！");
@@ -57,15 +57,15 @@ public class GiftCommand implements SubCommand {
                     player.sendMessage("§c请输入礼包名称！");
                     return false;
                 }
-                if (YEss.getGiftManager().existsGift(giftName)) {
-                    YEss.getGiftManager().getGiftEditGUI().init(giftName);
-                    YEss.getGiftManager().getGiftEditGUI().open(player);
+                if (Y.getGiftManager().existsGift(giftName)) {
+                    Y.getGiftManager().getGiftEditGUI().init(giftName);
+                    Y.getGiftManager().getGiftEditGUI().open(player);
                 } else {
                     player.sendMessage("§c礼包不存在！");
                 }
             }
             case "list" -> {
-                List<String> gifts = YEss.getGiftManager().getGiftList();
+                List<String> gifts = Y.getGiftManager().getGiftList();
                 if (gifts.isEmpty()) {
                     player.sendMessage("§c暂无礼包！");
                 } else {
@@ -78,7 +78,7 @@ public class GiftCommand implements SubCommand {
                     player.sendMessage("§c请输入礼包名称！");
                     return false;
                 }
-                for (ItemStack item : YEss.getGiftManager().getGiftItem(giftName)) {
+                for (ItemStack item : Y.getGiftManager().getGiftItem(giftName)) {
                     player.getInventory().addItem(item);
                 }
             }
@@ -89,7 +89,7 @@ public class GiftCommand implements SubCommand {
                 }
                 Player target = Bukkit.getPlayerExact(args[3]);
                 if (target != null) {
-                    for (ItemStack item : YEss.getGiftManager().getGiftItem(giftName)) {
+                    for (ItemStack item : Y.getGiftManager().getGiftItem(giftName)) {
                         target.getInventory().addItem(item);
                     }
                 } else sender.sendMessage(ChatColor.RED + "这个玩家不在线");
@@ -101,8 +101,8 @@ public class GiftCommand implements SubCommand {
                 }
                 Player target = Bukkit.getPlayerExact(args[3]);
                 if (target != null) {
-                    YEss.getGiftManager().getGiftLookGUI().init(giftName);
-                    YEss.getGiftManager().getGiftLookGUI().open(target);
+                    Y.getGiftManager().getGiftLookGUI().init(giftName);
+                    Y.getGiftManager().getGiftLookGUI().open(target);
                 } else sender.sendMessage(ChatColor.RED + "这个玩家不在线");
             }
             case "delete" -> {
@@ -110,7 +110,7 @@ public class GiftCommand implements SubCommand {
                     player.sendMessage("§c请输入礼包名称！");
                     return false;
                 }
-                YEss.getGiftManager().deleteGift(giftName, player);
+                Y.getGiftManager().deleteGift(giftName, player);
             }
             case "help" -> sendHelp(player);
             default -> sender.sendMessage(getUsage());
@@ -137,7 +137,7 @@ public class GiftCommand implements SubCommand {
      */
     @Override
     public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("RegisterCommand.gift.permission");
+        return plugin.getConfig().getString("registerCommand.gift.permission");
     }
 
     /**
@@ -147,7 +147,7 @@ public class GiftCommand implements SubCommand {
      */
     @Override
     public Boolean requireRegister() {
-        return plugin.getConfig().getBoolean("RegisterCommand.gift.enable");
+        return plugin.getConfig().getBoolean("registerCommand.gift.enable");
     }
 
     private void sendHelp(Player player) {
@@ -170,7 +170,7 @@ public class GiftCommand implements SubCommand {
 //            completions.add("edit");
 //            completions.add("list");
 //        } else if (args.length == 2 && (args[0].equalsIgnoreCase("edit"))) {
-//            completions.addAll(YEss.getGiftManager().getGiftList());
+//            completions.addAll(Y.getGiftManager().getGiftList());
 //        }
 //
 //        return completions;

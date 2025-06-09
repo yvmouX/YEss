@@ -13,7 +13,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
 
-public final class YEss extends JavaPlugin {
+public final class Y extends JavaPlugin {
+    private static Y instance;
     private final Logger logger = getLogger();
     private static FoliaLib foliaLib;
     private static PluginStorage pluginStorage;
@@ -22,6 +23,7 @@ public final class YEss extends JavaPlugin {
     public static FoliaLib getFoliaLib() {return foliaLib;}
     public static PluginStorage getPluginStorage() {return pluginStorage;}
     public static GiftManager getGiftManager() {return giftManager;}
+    public static Y getInstance() {return instance;}
 
     @Override
     public void onEnable() {

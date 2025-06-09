@@ -1,16 +1,16 @@
 package cn.yvmou.yess.commands;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 public class AliasCommand implements CommandExecutor {
-    private final YEss plugin;
+    private final Y plugin;
     private final String originalCommand;
 
-    public AliasCommand(YEss plugin, String originalCommand) {
+    public AliasCommand(Y plugin, String originalCommand) {
         this.plugin = plugin;
         this.originalCommand = originalCommand;
     }
