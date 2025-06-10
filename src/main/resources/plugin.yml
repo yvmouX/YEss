@@ -3,7 +3,9 @@ version: '${version}'
 main: cn.yvmou.yess.Y
 api-version: '1.21'
 prefix: YEss
-authors: [yvmoux]
+authors:
+  - yvmoux
+  - Findoutsider
 description: a ess plguin
 website: www.yvmou.cn
 softdepend: ["PlaceholderAPI"]

@@ -15,11 +15,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Logger;
-
 public final class Y extends JavaPlugin {
     private static Y instance;
-    private final Logger logger = getLogger();
     private static FoliaLib foliaLib;
     private static PluginStorage pluginStorage;
     private static PlayerDataStorage playerStorage;
