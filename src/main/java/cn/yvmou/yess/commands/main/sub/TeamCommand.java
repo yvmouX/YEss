@@ -73,7 +73,7 @@ public class TeamCommand implements SubCommand {
      */
     @Override
     public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("RegisterCommand.team.permission");
+        return plugin.getConfig().getString("registerCommand.team.permission", "yess.command.team");
     }
 
     /**
@@ -83,7 +83,7 @@ public class TeamCommand implements SubCommand {
      */
     @Override
     public Boolean requireRegister() {
-        return plugin.getConfig().getBoolean("RegisterCommand.team.enable");
+        return plugin.getConfig().getBoolean("registerCommand.team.enable", true);
     }
 
     private void sendHelp(Player player) {

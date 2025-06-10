@@ -26,6 +26,10 @@ registerCommand:
     enable: true
     alias: "gift"
     permission: "yess.command.gift"
+  team:
+    enable: true
+    alias: "team"
+    permission: "yess.command.team"
 
 # 存储类型: yaml, mysql 或 sqlite
 storage:
