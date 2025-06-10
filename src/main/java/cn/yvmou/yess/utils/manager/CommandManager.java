@@ -52,12 +52,12 @@ public class CommandManager {
             List<PluginCommand> commandsToRegister = new ArrayList<>();
 
             // 遍历配置文件中的命令
-            ConfigurationSection configurationSection = plugin.getConfig().getConfigurationSection("RegisterCommand");
+            ConfigurationSection configurationSection = plugin.getConfig().getConfigurationSection("registerCommand");
             if (configurationSection == null) return;
             Set<String> allCmd = configurationSection.getKeys(false);
             for (String cmd : allCmd) {
-                boolean enabled = plugin.getConfig().getBoolean("RegisterCommand." + cmd + ".enable", false);
-                String[] allAlias = plugin.getConfig().getString("RegisterCommand." + cmd + ".alias", "none").split(",");
+                boolean enabled = plugin.getConfig().getBoolean("registerCommand." + cmd + ".enable", false);
+                String[] allAlias = plugin.getConfig().getString("registerCommand." + cmd + ".alias", "none").split(",");
 
                 for (String alias : allAlias) {
                     String a = alias.trim();
