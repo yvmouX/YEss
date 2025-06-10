@@ -137,7 +137,7 @@ public class GiftCommand implements SubCommand {
      */
     @Override
     public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("RegisterCommand.gift.permission");
+        return plugin.getConfig().getString("registerCommand.gift.permission", "yess.command.gift");
     }
 
     /**
@@ -147,7 +147,7 @@ public class GiftCommand implements SubCommand {
      */
     @Override
     public Boolean requireRegister() {
-        return plugin.getConfig().getBoolean("RegisterCommand.gift.enable");
+        return plugin.getConfig().getBoolean("registerCommand.gift.enable", true);
     }
 
     private void sendHelp(Player player) {
@@ -170,7 +170,7 @@ public class GiftCommand implements SubCommand {
 //            completions.add("edit");
 //            completions.add("list");
 //        } else if (args.length == 2 && (args[0].equalsIgnoreCase("edit"))) {
-//            completions.addAll(YEss.getGiftManager().getGiftList());
+//            completions.addAll(Y.getGiftManager().getGiftList());
 //        }
 //
 //        return completions;

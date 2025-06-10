@@ -1,7 +1,7 @@
-Version: 1.0.0
+version: 1.0.0
 
 # 该项的更改需要重启服务器才能生效
-RegisterCommand:
+registerCommand:
   reload:
     enable: true
     alias: "none"

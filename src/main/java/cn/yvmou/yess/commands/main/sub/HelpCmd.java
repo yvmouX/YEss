@@ -26,12 +26,12 @@ public class HelpCmd implements SubCommand {
 
     @Override
     public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("RegisterCommand.help.permission", null);
+        return plugin.getConfig().getString("registerCommand.help.permission", "yess.command.help");
     }
 
     @Override
     public Boolean requireRegister() {
-        return plugin.getConfig().getBoolean("RegisterCommand.help.enable");
+        return plugin.getConfig().getBoolean("registerCommand.help.enable", false);
     }
 
     public void seedHelpMessage(CommandSender sender) {
@@ -41,5 +41,6 @@ public class HelpCmd implements SubCommand {
         sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " craft <player>");
         sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " ec <player>");
         sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " glow <player>");
+        sender.sendMessage(ChatColor.WHITE + "/" + plugin.getDescription().getName().toLowerCase() + " gift <create|edit|delete|give|help>");
     }
 }

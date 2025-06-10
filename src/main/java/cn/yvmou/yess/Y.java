@@ -4,6 +4,7 @@ import cn.yvmou.yess.managers.GiftManager;
 import cn.yvmou.yess.expansion.PapiExpansion;
 import cn.yvmou.yess.managers.TeamManager;
 import cn.yvmou.yess.storage.PlayerDataStorage;
+import cn.yvmou.yess.utils.LoggerUtils;
 import cn.yvmou.yess.utils.manager.CommandManager;
 import cn.yvmou.yess.storage.PluginStorage;
 import cn.yvmou.yess.storage.StorageFactory;
@@ -49,18 +50,15 @@ public final class Y extends JavaPlugin {
         giftManager = new GiftManager(this); // 初始化礼包管理器
 
         teamManager = new TeamManager(this, playerStorage);
-
-        // 注册命令和事件
         new CommandManager(this).registerCommands();
         new ListenerManager(this).registerListener();
 
         // HOOK
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new PapiExpansion(this).register(); //
-            logger.info(ChatColor.BLUE + "成功挂钩PlaceholderAPI");
+            LoggerUtils.info(ChatColor.BLUE + "成功挂钩PlaceholderAPI");
         }
-
-        logger.info(ChatColor.GREEN + "插件加载成功！");
+        LoggerUtils.info(ChatColor.GREEN + "插件加载成功！");
     }
 
     @Override
@@ -68,6 +66,6 @@ public final class Y extends JavaPlugin {
         // 关闭存储系统
         if (pluginStorage != null) {pluginStorage.shutdown();}
 
-        logger.info(ChatColor.RED + "插件卸载成功！");
+        LoggerUtils.info(ChatColor.RED + "插件卸载成功！");
     }
 }

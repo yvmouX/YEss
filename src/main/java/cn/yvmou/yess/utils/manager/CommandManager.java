@@ -65,7 +65,7 @@ public class CommandManager {
                         // 创建命令实例
                         PluginCommand pluginCommand = constructor.newInstance(a, plugin);
                         pluginCommand.setExecutor(new AliasCommand(plugin, cmd));
-                        pluginCommand.setDescription("YEss plugin command alias for: " + cmd);
+                        pluginCommand.setDescription("Y plugin command alias for: " + cmd);
                         pluginCommand.setUsage("/" + a);
 
                         commandsToRegister.add(pluginCommand);
