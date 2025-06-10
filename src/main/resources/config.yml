@@ -12,11 +12,11 @@ registerCommand:
     permission: "yess.command.help"
   craft:
     enable: true
-    alias: "craft"
+    alias: "craft, c"
     permission: "yess.command.craft"
   ec:
     enable: true
-    alias: "ec"
+    alias: "enderchest, ec"
     permission: "yess.command.ec"
   glow:
     enable: true
@@ -56,3 +56,19 @@ portal:
     x: 44
     y: 78
     z: 2
+
+disableNetherPortal:
+  - spawn
+  - afk
+  - arena
+
+AFK:
+  enable: true
+  afkTime: 10 # 单位s
+  disableWorlds:
+    - arena
+  toWorld: afk # 当玩家afk后传送到的世界，为空不处理
+  effect: # 当玩家afk后给予的药水效果，为空不处理
+    - "BLINDNESS:1"
+  commands:
+    - "say hello"

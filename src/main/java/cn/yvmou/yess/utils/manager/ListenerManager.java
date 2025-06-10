@@ -1,10 +1,7 @@
 package cn.yvmou.yess.utils.manager;
 
 import cn.yvmou.yess.Y;
-import cn.yvmou.yess.events.DamageListener;
-import cn.yvmou.yess.events.GiftGUIListener;
-import cn.yvmou.yess.events.GlowListener;
-import cn.yvmou.yess.events.PortalListener;
+import cn.yvmou.yess.events.*;
 
 public class ListenerManager {
     private final Y plugin;
@@ -16,5 +13,7 @@ public class ListenerManager {
         plugin.getServer().getPluginManager().registerEvents(new PortalListener(plugin), plugin);
         plugin.getServer().getPluginManager().registerEvents(new GiftGUIListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new DamageListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new PlayerAFKListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new PlayerPortalListener(), plugin);
     }
 }
