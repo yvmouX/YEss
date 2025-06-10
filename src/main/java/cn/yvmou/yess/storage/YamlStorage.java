@@ -1,6 +1,6 @@
 package cn.yvmou.yess.storage;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -10,12 +10,12 @@ import java.util.Set;
 import java.util.UUID;
 
 public class YamlStorage implements PluginStorage {
-    private final YEss plugin;
+    private final Y plugin;
     private YamlConfiguration dataConfig;
     private File dataFolder;
     private File dataFile;
 
-    public YamlStorage(YEss plugin) {
+    public YamlStorage(Y plugin) {
         this.plugin = plugin;
         this.init();
     }

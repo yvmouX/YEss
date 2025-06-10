@@ -1,6 +1,6 @@
 package cn.yvmou.yess.commands.main.sub;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import cn.yvmou.yess.commands.SubCommand;
 import cn.yvmou.yess.utils.CommandUtils;
 import org.bukkit.Bukkit;
@@ -9,9 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class OpenEnderChestCmd implements SubCommand {
-    private final YEss plugin;
+    private final Y plugin;
 
-    public OpenEnderChestCmd(YEss plugin) { this.plugin = plugin; }
+    public OpenEnderChestCmd(Y plugin) { this.plugin = plugin; }
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {

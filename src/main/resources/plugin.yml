@@ -1,6 +1,6 @@
 name: YEss
 version: '${version}'
-main: cn.yvmou.yess.YEss
+main: cn.yvmou.yess.Y
 api-version: '1.21'
 prefix: YEss
 authors: [yvmoux]

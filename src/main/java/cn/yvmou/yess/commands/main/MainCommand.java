@@ -1,6 +1,6 @@
 package cn.yvmou.yess.commands.main;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import cn.yvmou.yess.commands.SubCommand;
 import cn.yvmou.yess.commands.main.sub.*;
 import cn.yvmou.yess.utils.CommandUtils;
@@ -14,10 +14,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class MainCommand implements CommandExecutor {
-    private final YEss plugin;
+    private final Y plugin;
     private final Map<String, SubCommand> subCommands = new HashMap<>(); // 子命令 SubCommand
 
-    public MainCommand(YEss plugin) {
+    public MainCommand(Y plugin) {
         this.plugin = plugin;
 
         subCommands.put("help", new HelpCmd(plugin));
@@ -26,6 +26,7 @@ public class MainCommand implements CommandExecutor {
         subCommands.put("craft", new OpenCraftCmd(plugin));
         subCommands.put("glow", new GlowCmd(plugin));
         subCommands.put("gift", new GiftCommand(plugin));
+        subCommands.put("team", new TeamCommand(plugin));
 
         // 迭代器
         // 移除未注册命令

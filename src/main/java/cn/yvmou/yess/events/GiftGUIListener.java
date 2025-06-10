@@ -1,6 +1,6 @@
 package cn.yvmou.yess.events;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -50,23 +50,23 @@ public class GiftGUIListener implements Listener {
             if (slot == 49) { // 保存按钮
                 List<ItemStack> items = new ArrayList<>();
                 for (int i = 0; i < 45; i++) {
-                    ItemStack item = YEss.getGiftManager().getGiftEditGUI().getInventory().getItem(i);
+                    ItemStack item = Y.getGiftManager().getGiftEditGUI().getInventory().getItem(i);
 
                     if (item != null) {
                         items.add(item);
                     }
 
-                    YEss.getGiftManager().getItems().addAll(items);
+                    Y.getGiftManager().getItems().addAll(items);
                 }
 
-                YEss.getGiftManager().saveGiftItems(YEss.getGiftManager().getGiftEditGUI().getGiftName());
+                Y.getGiftManager().saveGiftItems(Y.getGiftManager().getGiftEditGUI().getGiftName());
 
                 player.closeInventory();
             } else if (slot == 45) { // 取消按钮
                 player.closeInventory();
             } else if (slot == 53) { // 清空按钮
                 for (int i = 0; i < 45; i++) {
-                    YEss.getGiftManager().getGiftEditGUI().getInventory().setItem(i, null);
+                    Y.getGiftManager().getGiftEditGUI().getInventory().setItem(i, null);
                 }
                 player.sendMessage("§c礼包已清空！");
             }

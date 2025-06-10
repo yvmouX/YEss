@@ -2,6 +2,8 @@ package cn.yvmou.yess;
 
 import cn.yvmou.yess.managers.GiftManager;
 import cn.yvmou.yess.expansion.PapiExpansion;
+import cn.yvmou.yess.managers.TeamManager;
+import cn.yvmou.yess.storage.PlayerDataStorage;
 import cn.yvmou.yess.utils.manager.CommandManager;
 import cn.yvmou.yess.storage.PluginStorage;
 import cn.yvmou.yess.storage.StorageFactory;
@@ -9,30 +11,44 @@ import cn.yvmou.yess.utils.manager.ListenerManager;
 import com.tcoded.folialib.FoliaLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
 
-public final class YEss extends JavaPlugin {
+public final class Y extends JavaPlugin {
+    private static Y instance;
     private final Logger logger = getLogger();
     private static FoliaLib foliaLib;
     private static PluginStorage pluginStorage;
+    private static PlayerDataStorage playerStorage;
     private static GiftManager giftManager;
+    private static TeamManager teamManager;
 
     public static FoliaLib getFoliaLib() {return foliaLib;}
     public static PluginStorage getPluginStorage() {return pluginStorage;}
+    public static PlayerDataStorage getPlayerStorage() {return playerStorage;}
     public static GiftManager getGiftManager() {return giftManager;}
+    public static TeamManager getTeamManager() {return teamManager;}
+
+    public static Plugin getInstance() {
+        return instance;
+    }
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
 
         // 初始化
+        instance = this;
+
         foliaLib = new FoliaLib(this);
 
         pluginStorage = StorageFactory.createStorage(this); // 初始化插件存储
 
         giftManager = new GiftManager(this); // 初始化礼包管理器
+
+        teamManager = new TeamManager(this, playerStorage);
 
         // 注册命令和事件
         new CommandManager(this).registerCommands();

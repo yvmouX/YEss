@@ -1,6 +1,6 @@
 package cn.yvmou.yess.utils.manager;
 
-import cn.yvmou.yess.YEss;
+import cn.yvmou.yess.Y;
 import cn.yvmou.yess.commands.AliasCommand;
 import cn.yvmou.yess.commands.main.MainCommand;
 import cn.yvmou.yess.commands.main.MainTabCompleter;
@@ -15,9 +15,9 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 public class CommandManager {
-    private final YEss plugin;
+    private final Y plugin;
 
-    public CommandManager(YEss plugin) { this.plugin = plugin; }
+    public CommandManager(Y plugin) { this.plugin = plugin; }
     /**
      * 注册所有命令
      */
@@ -30,8 +30,8 @@ public class CommandManager {
 
         // 注册别名命令
         Runnable r = this::registerAliasCommands;
-        if (YEss.getFoliaLib().isFolia()) {
-            YEss.getFoliaLib().getScheduler().runNextTick(wrappedTask -> r.run());
+        if (Y.getFoliaLib().isFolia()) {
+            Y.getFoliaLib().getScheduler().runNextTick(wrappedTask -> r.run());
         } else {
             Bukkit.getScheduler().runTask(plugin, r);
         }
