@@ -2,6 +2,8 @@ package cn.yvmou.yess;
 
 import cn.yvmou.yess.managers.GiftManager;
 import cn.yvmou.yess.expansion.PapiExpansion;
+import cn.yvmou.yess.managers.TeamManager;
+import cn.yvmou.yess.storage.PlayerDataStorage;
 import cn.yvmou.yess.utils.LoggerUtils;
 import cn.yvmou.yess.utils.manager.CommandManager;
 import cn.yvmou.yess.storage.PluginStorage;
@@ -10,18 +12,29 @@ import cn.yvmou.yess.utils.manager.ListenerManager;
 import com.tcoded.folialib.FoliaLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Logger;
 
 public final class Y extends JavaPlugin {
     private static Y instance;
+    private final Logger logger = getLogger();
     private static FoliaLib foliaLib;
     private static PluginStorage pluginStorage;
+    private static PlayerDataStorage playerStorage;
     private static GiftManager giftManager;
+    private static TeamManager teamManager;
 
     public static FoliaLib getFoliaLib() {return foliaLib;}
     public static PluginStorage getPluginStorage() {return pluginStorage;}
+    public static PlayerDataStorage getPlayerStorage() {return playerStorage;}
     public static GiftManager getGiftManager() {return giftManager;}
-    public static Y getInstance() {return instance;}
+    public static TeamManager getTeamManager() {return teamManager;}
+
+    public static Plugin getInstance() {
+        return instance;
+    }
 
     @Override
     public void onEnable() {
@@ -36,6 +49,7 @@ public final class Y extends JavaPlugin {
 
         giftManager = new GiftManager(this); // 初始化礼包管理器
 
+        teamManager = new TeamManager(this, playerStorage);
         new CommandManager(this).registerCommands();
         new ListenerManager(this).registerListener();
 
@@ -44,7 +58,6 @@ public final class Y extends JavaPlugin {
             new PapiExpansion(this).register(); //
             LoggerUtils.info(ChatColor.BLUE + "成功挂钩PlaceholderAPI");
         }
-
         LoggerUtils.info(ChatColor.GREEN + "插件加载成功！");
     }
 

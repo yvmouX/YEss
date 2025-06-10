@@ -32,5 +32,4 @@ public class LoggerUtils {
     public static void error(ChatColor color, String msg) {
         console.sendMessage(CONSOLE_PREFIX + (color == null ? ChatColor.RED : color) + msg);
     }
-
 }
