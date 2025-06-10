@@ -11,6 +11,7 @@ import org.bukkit.persistence.PersistentDataType;
 public class PlayerDataStorage {
     private final Y plugin;
     private PersistentDataContainer data;
+    private String _data;
 
     public PlayerDataStorage(Y plugin) {
         this.plugin = plugin;
@@ -41,14 +42,23 @@ public class PlayerDataStorage {
 
     public String getPlayerData(Player player) {
         data = player.getPersistentDataContainer();
-        return data.get(new NamespacedKey(plugin, "team"), PersistentDataType.STRING);
+        try {
+            _data = data.get(new NamespacedKey(plugin, "team"), PersistentDataType.STRING);
+        } catch (Exception e) {
+            return null;
+        }
+        return _data;
     }
 
     public String getPlayerData(OfflinePlayer player) {
         if (player.getPlayer() == null) return null;
 
-        data = player.getPlayer().getPersistentDataContainer();
-        return data.get(new NamespacedKey(plugin, "team"), PersistentDataType.STRING);
+        try {
+            _data = data.get(new NamespacedKey(plugin, "team"), PersistentDataType.STRING);
+        } catch (Exception e) {
+            return null;
+        }
+        return _data;
     }
 
     public boolean isInvited(Player player) {
