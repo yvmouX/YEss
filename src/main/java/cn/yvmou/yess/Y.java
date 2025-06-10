@@ -43,6 +43,7 @@ public final class Y extends JavaPlugin {
         foliaLib = new FoliaLib(this);
 
         pluginStorage = StorageFactory.createStorage(this); // 初始化插件存储
+        playerStorage = new PlayerDataStorage(this);
 
         giftManager = new GiftManager(this); // 初始化礼包管理器
 
