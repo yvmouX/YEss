@@ -63,7 +63,7 @@ disableNetherPortal:
   - arena
 
 AFK:
-  enable: true
+  enable: false
   afkTime: 10 # 单位s
   disableWorlds:
     - arena
