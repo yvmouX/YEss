@@ -4,6 +4,7 @@ import cn.yvmou.yess.Y;
 import cn.yvmou.yess.commands.SubCommand;
 import cn.yvmou.yess.managers.TeamManager;
 import cn.yvmou.yess.utils.CommandUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,13 +38,21 @@ public class TeamCommand implements SubCommand {
         }
 
         String subCommand = args[1].toLowerCase();
-        String[] args2 = Arrays.copyOfRange(args, 2, args.length);
+
+        if (subCommand.equalsIgnoreCase("invite") ||
+                subCommand.equalsIgnoreCase("remove") ||
+                subCommand.equalsIgnoreCase("promote")) {
+            if (args.length != 3) {
+                sender.sendMessage(ChatColor.RED + "§c用法错误！请输入 /yess team " + subCommand + " <玩家>");
+                return false;
+            }
+        }
 
         switch (subCommand) {
             case "create" -> teamManager.createTeam(player);
-            case "invite" -> teamManager.inviteTeam(player, plugin.getServer().getPlayer(args2[0]));
-            case "remove" -> teamManager.removePlayer(player, plugin.getServer().getPlayer(args2[0]));
-            case "promote" -> teamManager.promotePlayer(player, plugin.getServer().getPlayer(args2[0]));
+            case "invite" -> teamManager.inviteTeam(player, plugin.getServer().getPlayer(args[2]));
+            case "remove" -> teamManager.removePlayer(player, plugin.getServer().getPlayer(args[2]));
+            case "promote" -> teamManager.promotePlayer(player, plugin.getServer().getPlayer(args[2]));
             case "disband" -> teamManager.disbandTeam(player);
             case "show" -> teamManager.showTeam(player);
             case "leave" -> teamManager.leaveTeam(player);

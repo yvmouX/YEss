@@ -2,13 +2,16 @@ package cn.yvmou.yess.managers;
 
 import cn.yvmou.yess.Y;
 import cn.yvmou.yess.storage.PlayerDataStorage;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class TeamManager {
     private final Y plugin;
@@ -76,17 +79,30 @@ public class TeamManager {
     public void createTeam(Player senderPlayer) {
         if (senderIsTeamed(senderPlayer)) return;
         playerDataStorage.setPlayerData(senderPlayer, senderPlayer, false);
+        senderPlayer.sendMessage("§a你已成功创建一个队伍");
     }
 
     public void inviteTeam(Player senderPlayer, Player targetPlayer) {
         if (targetIsTeamed(senderPlayer, targetPlayer)) return;
-        targetPlayer.sendMessage("§a" + senderPlayer + " 邀请你加入他的队伍\n" +
-                "输入/yess team accept接收邀请，/yess team deny拒绝邀请");
+        targetPlayer.sendMessage("§a* " + senderPlayer.getName() + " 邀请你加入他的队伍\n" +
+                "输入/yess team accept接收邀请，/yess team deny拒绝邀请\n2分钟内有效");
+        senderPlayer.sendMessage("§a你已向" + targetPlayer.getName() + "发送邀请");
         playerDataStorage.setPlayerData(senderPlayer, targetPlayer, true);
+        UUID targetPlayerId = targetPlayer.getUniqueId();
+        new BukkitRunnable()  {
+            @Override
+            public void run() {
+                if (playerDataStorage.isInvited(targetPlayer)) {
+                    if (Bukkit.getServer().getOnlinePlayers().contains(targetPlayer)) {
+                        playerDataStorage.removePlayerData(targetPlayer);
+                    } else playerDataStorage.removePlayerData(Bukkit.getServer().getOfflinePlayer(targetPlayerId));
+                }
+            }
+        }.runTaskLater(plugin, 20 * 120);
     }
 
     public void removePlayer(Player senderPlayer, Player targetPlayer) {
-        if (!hasTeam(senderPlayer) &&
+        if (!hasTeam(senderPlayer) ||
                 !playerDataStorage.getPlayerData(senderPlayer).equalsIgnoreCase(senderPlayer.getName())) {
             senderPlayer.sendMessage("§c只有队长能够使用该命令");
             return;
@@ -99,12 +115,12 @@ public class TeamManager {
         }
 
         playerDataStorage.removePlayerData(targetPlayer);
-        targetPlayer.sendMessage("§a" + senderPlayer + "将你从队伍中移除");
-        senderPlayer.sendMessage("§a你已将" + targetPlayer + "从队伍中移除");
+        targetPlayer.sendMessage("§a* " + senderPlayer.getName() + "将你从队伍中移除");
+        senderPlayer.sendMessage("§a你已将" + targetPlayer.getName() + "从队伍中移除");
     }
 
     public void promotePlayer(Player senderPlayer, Player targetPlayer) {
-        if (!hasTeam(senderPlayer) &&
+        if (!hasTeam(senderPlayer) ||
                 !playerDataStorage.getPlayerData(senderPlayer).equalsIgnoreCase(senderPlayer.getName())) {
             senderPlayer.sendMessage("§c只有队长能够使用该命令");
             return;
@@ -113,13 +129,15 @@ public class TeamManager {
         List<Player> members = new ArrayList<>();
 
         for (Player member : plugin.getServer().getOnlinePlayers()) {
-            if (playerDataStorage.getPlayerData(member).equalsIgnoreCase(senderPlayer.getName())) {
+            String memberData = playerDataStorage.getPlayerData(member);
+            if (memberData != null && memberData.equalsIgnoreCase(senderPlayer.getName())) {
                 members.add(member);
             }
         }
 
         if (!members.contains(targetPlayer)) {
             senderPlayer.sendMessage("§c该玩家不在线或不在队伍中");
+            return;
         }
 
         for (Player member : members) {
@@ -127,30 +145,32 @@ public class TeamManager {
             if (member.getName().equalsIgnoreCase(targetPlayer.getName())) member.sendMessage("§a你被" + senderPlayer + "提升为队长");
             playerDataStorage.removePlayerData(member);
             playerDataStorage.setPlayerData(targetPlayer, member, false);
-            return;
         }
 
     }
 
     public void disbandTeam(Player senderPlayer) {
-        if (!hasTeam(senderPlayer) &&
+        if (!hasTeam(senderPlayer) ||
                 !playerDataStorage.getPlayerData(senderPlayer).equalsIgnoreCase(senderPlayer.getName())) {
             senderPlayer.sendMessage("§c只有队长能够使用该命令");
             return;
         }
 
         playerDataStorage.removePlayerData(senderPlayer);
+        senderPlayer.sendMessage("§a你已解散你的队伍");
 
         List<Player> onlineMembers = new ArrayList<>();
         List<OfflinePlayer> offlineMembers = new ArrayList<>();
 
         for (Player member : plugin.getServer().getOnlinePlayers()) {
-            if (playerDataStorage.getPlayerData(member).equalsIgnoreCase(senderPlayer.getName())) {
+            String memberData = playerDataStorage.getPlayerData(member);
+            if (memberData != null && memberData.equalsIgnoreCase(senderPlayer.getName())) {
                 onlineMembers.add(member);
             }
         }
         for (OfflinePlayer member : plugin.getServer().getOfflinePlayers()) {
-            if (playerDataStorage.getPlayerData(member).equalsIgnoreCase(senderPlayer.getName())) {
+            String memberData = playerDataStorage.getPlayerData(member);
+            if (memberData != null && memberData.equalsIgnoreCase(senderPlayer.getName())) {
                 offlineMembers.add(member);
             }
         }
@@ -165,14 +185,24 @@ public class TeamManager {
 
     public void showTeam(Player senderPlayer) {
         Set<String> members = new HashSet<>();
-
+        
+        // 检查发送者是否在队伍中
+        if (!hasTeam(senderPlayer)) {
+            senderPlayer.sendMessage("§c你没有加入队伍");
+            return;
+        }
+        
+        String teamLeader = playerDataStorage.getPlayerData(senderPlayer);
+        
         for (Player member : plugin.getServer().getOnlinePlayers()) {
-            if (playerDataStorage.getPlayerData(member).equalsIgnoreCase(senderPlayer.getName())) {
+            String memberData = playerDataStorage.getPlayerData(member);
+            if (memberData != null && memberData.equalsIgnoreCase(teamLeader)) {
                 members.add(member.getName());
             }
         }
         for (OfflinePlayer member : plugin.getServer().getOfflinePlayers()) {
-            if (playerDataStorage.getPlayerData(member).equalsIgnoreCase(senderPlayer.getName())) {
+            String memberData = playerDataStorage.getPlayerData(member);
+            if (memberData != null && memberData.equalsIgnoreCase(teamLeader)) {
                 members.add(member.getName());
             }
         }
@@ -194,41 +224,57 @@ public class TeamManager {
         }
 
         // 提取队长名称
-        String leader_name = playerDataStorage.getPlayerData(senderPlayer).split("-")[0];
+        String playerData = playerDataStorage.getPlayerData(senderPlayer);
+        if (playerData == null || !playerData.contains("-invited")) {
+            senderPlayer.sendMessage("§c邀请数据无效");
+            return;
+        }
+        
+        String leader_name = playerData.split("-")[0];
+        leader_name = leader_name.split("=")[1].replace("}", "");
+        senderPlayer.sendMessage("§a你已接受" + leader_name + "的邀请");
         Player leader = plugin.getServer().getPlayer(leader_name);
+        senderPlayer.sendMessage(String.valueOf(leader));
+        if (leader == null) {
+            senderPlayer.sendMessage("§c队长不在线，无法加入队伍");
+            return;
+        }
 
         // 移除被邀请状态
         playerDataStorage.removePlayerData(senderPlayer);
 
         for (Player member : plugin.getServer().getOnlinePlayers()) {
-            if (playerDataStorage.getPlayerData(member).equalsIgnoreCase(leader_name)) {
-                member.sendMessage("§a" + senderPlayer + "加入了队伍");
+            String memberData = playerDataStorage.getPlayerData(member);
+            if (memberData != null && memberData.equalsIgnoreCase(leader_name)) {
+                member.sendMessage("§a" + senderPlayer.getName() + "加入了队伍");
             }
         }
 
         // 加入队伍
         playerDataStorage.setPlayerData(leader, senderPlayer, false);
-
     }
 
     public void denyTeam(Player senderPlayer) {
-        if (hasTeam(senderPlayer)) {
-            senderPlayer.sendMessage("§c你已经加入一个队伍了");
-            return;
-        } else if (!isInvited(senderPlayer)) {
+        if (!isInvited(senderPlayer)) {
             senderPlayer.sendMessage("§c你没有被邀请");
             return;
         }
 
         // 提取队长名称
-        String leader = playerDataStorage.getPlayerData(senderPlayer).split("-")[0];
+        String playerData = playerDataStorage.getPlayerData(senderPlayer);
+        if (playerData == null || !playerData.contains("-invited")) {
+            senderPlayer.sendMessage("§c邀请数据无效");
+            return;
+        }
+        
+        String leader = playerData.split("-")[0];
 
         // 移除被邀请状态
         playerDataStorage.removePlayerData(senderPlayer);
 
         senderPlayer.sendMessage("§c你拒绝了" + leader + "的邀请");
         Player leaderPlayer = plugin.getServer().getPlayer(leader);
-        if (leaderPlayer != null) leaderPlayer.sendMessage("§c" + senderPlayer + "拒绝了你的邀请");
+        if (leaderPlayer != null) leaderPlayer.sendMessage("§c" + senderPlayer.getName() + "拒绝了你的邀请");
     }
 
     public void leaveTeam(Player senderPlayer) {
@@ -238,9 +284,10 @@ public class TeamManager {
         }
 
         // 提取队长名称
-        String leader = playerDataStorage.getPlayerData(senderPlayer).split("-")[0];
-
-        if (leader.equalsIgnoreCase(senderPlayer.getName())) {
+        String leader = playerDataStorage.getPlayerData(senderPlayer);
+        
+        // 检查是否是队长自己
+        if (leader != null && leader.equalsIgnoreCase(senderPlayer.getName())) {
             senderPlayer.sendMessage("§c队长不允许退出队伍，请使用/yess team disband来解散队伍");
             return;
         }
@@ -249,8 +296,9 @@ public class TeamManager {
 
         senderPlayer.sendMessage("§a你退出了队伍");
         for (Player member : plugin.getServer().getOnlinePlayers()) {
-            if (playerDataStorage.getPlayerData(member).equalsIgnoreCase(leader)) {
-                member.sendMessage("§a" + senderPlayer + "退出了队伍");
+            String memberData = playerDataStorage.getPlayerData(member);
+            if (memberData != null && memberData.equalsIgnoreCase(leader)) {
+                member.sendMessage("§a" + senderPlayer.getName() + "退出了队伍");
             }
         }
     }
