@@ -44,7 +44,32 @@ jobs:
         run: |
           git_log=$(git log -5 --pretty=format:"- %h %s (%an, %ad)" --date=short)
           echo "full_log=$git_log" >> $GITHUB_OUTPUT
-      
+
+      - name: 获取上一个版本
+        id: get_previous_version
+        run: |
+          # 使用 GitHub API 获取最近的标签（按创建时间排序）
+          response=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/tags?per_page=2")
+          
+          # 提取第二个标签作为上一个版本（第一个是当前将要创建的）
+          previous_version=$(echo "$response" | jq -r '.[1].name')
+          echo "previous_version=${previous_version:-none}" >> $GITHUB_OUTPUT
+
+      - name: 生成变更日志
+        id: generate_changelog
+        run: |
+          if [ "${{ steps.get_previous_version.outputs.previous_version }}" != "none" ]; then
+            # 获取两个版本之间的提交
+            changelog=$(git log --pretty=format:"- %h %s (%an, %ad)" --date=short \
+              ${{ steps.get_previous_version.outputs.previous_version }}..HEAD)
+            echo "changelog=${changelog}" >> $GITHUB_OUTPUT
+          else
+            # 如果是第一个版本，获取所有提交
+            changelog=$(git log --pretty=format:"- %h %s (%an, %ad)" --date=short)
+            echo "changelog=${changelog}" >> $GITHUB_OUTPUT
+          fi
+
       - name: 发布到 GitHub Releases
         uses: Kir-Antipov/mc-publish@v3.3
         with:
@@ -59,20 +84,11 @@ jobs:
             **Release Date**: ${{ steps.get-date.outputs.current-date }}  
 
             ## 📦 Changes
-            ### Latest commit
-            ```plaintext
-            ${{ github.event.head_commit.message || 'No commit message provided' }}
-            ```
+            ### What's Changed
+            - 
 
             ### Full changelog
-            <details>
-            <summary>Click to expand</summary>
-
-            ```bash
-            ${{ steps.git-log.outputs.full_log || 'No detailed changelog generated' }}
-            ```
-
-            </details>
+            ${{ steps.generate_changelog.outputs.changelog }}
 
             ## 👥 Contributors
             - **Committer**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})  
