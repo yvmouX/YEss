@@ -44,33 +44,31 @@ jobs:
       - name: 生成变更日志
         id: generate_changelog
         run: |
-          # 获取所有标签（确保本地有最新标签）
+          # 获取所有标签
           git fetch --tags
 
-          # 获取最新的标签
+          # 获取最新两个标签
+          mapfile -t tags < <(git tag --sort=-creatordate | head -n 2)
+          previous_tag=${tags[1]}
           current_tag="v${{ env.VERSION }}"
-          previous_tag=$(git describe --tags --abbrev=0 "$current_tag^" 2>/dev/null || echo "")
-          
-          # 调试输出
-          echo "Current tag: $current_tag"
-          echo "Previous tag: $previous_tag"
-          
-          # 如果存在上一个版本，生成两个版本之间的变更日志
-          if [ -n "$previous_tag" ]; then
-            echo "Generating changelog between $previous_tag and HEAD"
-            changelog=$(git log --pretty=format:"- %s [%h]" --no-merges "$previous_tag..HEAD")
+
+          # 生成变更日志
+          if [ -n "$previous_tag" ] && [ "$previous_tag" != "$current_tag" ]; then
+            echo "生成变更日志: $previous_tag..HEAD"
+            changelog=$(git log --pretty=format:"- %s (by %an in %h)" --no-merges "$previous_tag..HEAD")
           else
-            # 如果没有找到上一个版本（首次发布），显示所有提交
-            echo "Generating full changelog (first release)"
-            changelog=$(git log --pretty=format:"- %s [%h]" --no-merges)
+            echo "生成完整变更日志 (首次发布)"
+            changelog=$(git log --pretty=format:"- %s (by %an in %h)" --no-merges)
           fi
-          
-          # 格式化输出以便在GitHub Actions中使用
+
+          # 转义多行文本
           changelog="${changelog//'%'/'%25'}"
           changelog="${changelog//$'\n'/'%0A'}"
           changelog="${changelog//$'\r'/'%0D'}"
-          
+
           echo "changelog=${changelog}" >> $GITHUB_OUTPUT
+          echo "生成的变更日志:"
+          echo "${changelog//%0A/$'\n'}"
 
       - name: 发布到 GitHub Releases
         uses: Kir-Antipov/mc-publish@v3.3
@@ -89,7 +87,7 @@ jobs:
             ### What's Changed
             -
 
-            ### Commit Message
+            ### 📝 Commit Message
             ${{ steps.generate_changelog.outputs.changelog }}
 
             Full changelog: 
