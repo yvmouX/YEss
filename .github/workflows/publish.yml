@@ -37,15 +37,11 @@ jobs:
           version: "v${{ env.VERSION }}"             # 插件版本号
           version-type: release                      # 发布类型为正式版
           files: build/libs/*.jar                    # 上传的 jar 文件路径
-          # changelog: |
-          #   # 更改日志
-          #   $CHANGES
-          github-changelog: |
-            **This version is automatically released by CI Build**
-            
-            Latest commit log:
-            
-            - ${{ github.event.head_commit.message }}
+          changelog: |
+            # 更改日志
+            ### Commit Message
+            ${{ env.commit_msg }}
+            artifacts: ${{ env.jar_dir }}
           github-generate-changelog: true
 
 
