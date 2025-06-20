@@ -96,20 +96,37 @@ jobs:
           previous_tag="${{ steps.get_tags.outputs.previous_tag }}"
 
           if [ -n "$previous_tag" ]; then
-            pr_logs=$(git log --merges --pretty=format:"%s" "$previous_tag..HEAD" | grep -E "Merge pull request" || true)
+            log_range="$previous_tag..HEAD"
           else
-            pr_logs=$(git log --merges --pretty=format:"%s" | grep -E "Merge pull request" || true)
+            log_range="HEAD"
           fi
 
           pr_list=""
-          while IFS= read -r line; do
-            pr_number=$(echo "$line" | grep -oE "#([0-9]+)" | tr -d '#')
+          # 处理 merge commit 方式
+          merge_prs=$(git log --merges --pretty=format:"%s|%b|%an" $log_range | grep -E "Merge pull request" || true)
+          while IFS='|' read -r subject body author; do
+            pr_number=$(echo "$subject" | grep -oE "#([0-9]+)" | tr -d '#')
+            pr_title=$(echo "$body" | head -n1)
             if [ -n "$pr_number" ]; then
-              pr_title=$(git log --merges --pretty=format:"%b" -1 $(git log --merges --pretty=format:"%H" --grep "Merge pull request #$pr_number" | head -n1) | head -n1)
-              pr_author=$(git log --merges --pretty=format:"%an" -1 $(git log --merges --pretty=format:"%H" --grep "Merge pull request #$pr_number" | head -n1))
-              pr_list="$pr_list* ${pr_title:-PR #$pr_number} by @$pr_author in $repo_url/pull/$pr_number\n"
+              pr_list="$pr_list* ${pr_title:-PR #$pr_number} by @$author in $repo_url/pull/$pr_number\n"
             fi
-          done <<< "$pr_logs"
+          done <<< "$merge_prs"
+
+          # 处理 squash merge 方式（commit message 里带 (#PR号)）
+          squash_prs=$(git log --pretty=format:"%s|%an" $log_range | grep -E "\(#([0-9]+)\)" || true)
+          while IFS='|' read -r subject author; do
+            pr_number=$(echo "$subject" | grep -oE "#([0-9]+)" | tr -d '#')
+            pr_title=$(echo "$subject" | sed -E 's/ \(#([0-9]+)\)//')
+            # 避免重复添加merge commit已处理过的PR
+            if ! echo "$pr_list" | grep -q "/pull/$pr_number"; then
+              pr_list="$pr_list* $pr_title by @$author in $repo_url/pull/$pr_number\n"
+            fi
+          done <<< "$squash_prs"
+
+          # 如果没有PR，给出提示
+          if [ -z "$pr_list" ]; then
+            pr_list="(本次发布未检测到PR合并)"
+          fi
 
           echo -e "pr_changelog<<EOF\n$pr_list\nEOF" >> $GITHUB_OUTPUT
 
