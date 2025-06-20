@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: 拉取代码
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 拉取完整的 Git 历史
 
       - name: 设置 JDK
         uses: actions/setup-java@v4
@@ -120,7 +122,7 @@ jobs:
             # 🚀 Release v${{ env.VERSION }}
             **Release Date**: ${{ steps.get-date.outputs.current-date }}
 
-            ## 📝 Commit Message
+            ## Commit Message
             ${{ steps.generate_changelog.outputs.changelog }}
             
             ${{ steps.github_release_notes.outputs.body }}
