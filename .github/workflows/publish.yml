@@ -13,8 +13,6 @@ jobs:
     steps:
       - name: 拉取代码
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 必须获取全部历史
 
       - name: 设置 JDK
         uses: actions/setup-java@v4
@@ -48,6 +46,7 @@ jobs:
           current_tag="v${{ env.VERSION }}"
           # 获取上一个非当前版本的标签
           previous_tag=$(git describe --tags --abbrev=0 "$current_tag^" 2>/dev/null || echo "")
+          echo "current_tag=${current_tag}" >> $GITHUB_OUTPUT
           echo "previous_tag=${previous_tag}" >> $GITHUB_OUTPUT
 
       - name: 生成变更日志
@@ -55,7 +54,7 @@ jobs:
         run: |
           repo_url="https://github.com/${{ github.repository }}"
           current_tag="v${{ env.VERSION }}"
-          previous_tag="${{ steps.get_previous_tag.outputs.previous_tag }}"
+          previous_tag="${{ steps.get_tags.outputs.previous_tag }}"
 
           # 生成变更日志内容
           if [ -n "$previous_tag" ]; then
@@ -87,6 +86,31 @@ jobs:
           echo "$changelog" >> $GITHUB_OUTPUT
           echo "$delimiter" >> $GITHUB_OUTPUT
 
+      - name: 生成PR变更日志
+        id: generate_pr_changelog
+        run: |
+          repo_url="https://github.com/${{ github.repository }}"
+          current_tag="v${{ env.VERSION }}"
+          previous_tag="${{ steps.get_tags.outputs.previous_tag }}"
+
+          if [ -n "$previous_tag" ]; then
+            pr_logs=$(git log --merges --pretty=format:"%s" "$previous_tag..HEAD" | grep -E "Merge pull request" || true)
+          else
+            pr_logs=$(git log --merges --pretty=format:"%s" | grep -E "Merge pull request" || true)
+          fi
+
+          pr_list=""
+          while IFS= read -r line; do
+            pr_number=$(echo "$line" | grep -oE "#([0-9]+)" | tr -d '#')
+            if [ -n "$pr_number" ]; then
+              pr_title=$(git log --merges --pretty=format:"%b" -1 $(git log --merges --pretty=format:"%H" --grep "Merge pull request #$pr_number" | head -n1) | head -n1)
+              pr_author=$(git log --merges --pretty=format:"%an" -1 $(git log --merges --pretty=format:"%H" --grep "Merge pull request #$pr_number" | head -n1))
+              pr_list="$pr_list* ${pr_title:-PR #$pr_number} by @$pr_author in $repo_url/pull/$pr_number\n"
+            fi
+          done <<< "$pr_logs"
+
+          echo -e "pr_changelog<<EOF\n$pr_list\nEOF" >> $GITHUB_OUTPUT
+
       - name: 发布到 GitHub Releases
         uses: Kir-Antipov/mc-publish@v3.3
         with:
@@ -100,11 +124,12 @@ jobs:
 
             **Release Date**: ${{ steps.get-date.outputs.current-date }}
 
-            ## 📦 Changes
+            ## 📦 What's Changed
+            ${{ steps.generate_pr_changelog.outputs.pr_changelog }}
 
-            ### 📝 Commit Message
+            ### Commit Message
             ${{ steps.generate_changelog.outputs.changelog }}
-            
+
             ### Full Changelog: [${{ steps.get_tags.outputs.previous_tag }}...${{ steps.get_tags.outputs.current_tag }}](https://github.com/${{ github.repository }}/compare/${{ steps.get_tags.outputs.previous_tag }}...${{ steps.get_tags.outputs.current_tag }})
 
             ## 👥 Contributors
