@@ -49,42 +49,44 @@ jobs:
           echo "current_tag=${current_tag}" >> $GITHUB_OUTPUT
           echo "previous_tag=${previous_tag}" >> $GITHUB_OUTPUT
 
-      - name: 生成变更日志
-        id: generate_changelog
-        run: |
-          repo_url="https://github.com/${{ github.repository }}"
-          current_tag="v${{ env.VERSION }}"
-          previous_tag="${{ steps.get_tags.outputs.previous_tag }}"
-
-          # 生成变更日志内容
-          if [ -n "$previous_tag" ]; then
-            full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges "$previous_tag..HEAD")
-          else
-            full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges)
-          fi
-
-          # 分割日志：前5条和剩余部分
-          first_five=$(echo "$full_changelog" | head -n 5)
-          remaining=$(echo "$full_changelog" | tail -n +6)
-          remaining_count=$(echo "$remaining" | grep -c '^-' || echo 0)
-
-          # 组装最终日志
-          if [ $remaining_count -gt 0 ]; then
-            changelog="$first_five
-          <details>
-          <summary>Click to expand remaining $remaining_count changes</summary>
-    
-          $remaining
-          </details>"
-          else
-          changelog="$full_changelog"
-          fi
-      
-          # 输出结果
-          delimiter="EOF_$(date +%s)"
-          echo "changelog<<$delimiter" >> $GITHUB_OUTPUT
-          echo "$changelog" >> $GITHUB_OUTPUT
-          echo "$delimiter" >> $GITHUB_OUTPUT
+          - name: 生成变更日志
+          id: generate_changelog
+          run: |
+            repo_url="https://github.com/${{ github.repository }}"
+            current_tag="v${{ env.VERSION }}"
+            previous_tag="${{ steps.get_tags.outputs.previous_tag }}"
+        
+            # 生成变更日志内容
+            if [ -n "$previous_tag" ]; then
+              full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges "$previous_tag..HEAD")
+            else
+              full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges)
+            fi
+        
+            # 分割日志：前5条和剩余部分
+            first_five=$(echo "$full_changelog" | head -n 5)
+            remaining=$(echo "$full_changelog" | tail -n +6)
+            remaining_count=$(echo "$remaining" | grep -c '^-' || echo 0)
+        
+            # 组装最终日志
+            if [ $remaining_count -gt 0 ]; then
+              changelog="$first_five
+            <details>
+            <summary>Click to expand remaining $remaining_count changes</summary>
+            
+            $remaining
+            </details>"
+            else
+              changelog="$full_changelog"
+            fi
+        
+            # 正确输出多行内容
+            delimiter="EOF_$(date +%s)"
+            {
+              echo "changelog<<$delimiter"
+              echo "$changelog"
+              echo "$delimiter"
+            } >> $GITHUB_OUTPUT
 
       - name: 生成PR变更日志
         id: generate_pr_changelog
