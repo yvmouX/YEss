@@ -45,30 +45,26 @@ jobs:
           git_log=$(git log -5 --pretty=format:"- %h %s (%an, %ad)" --date=short)
           echo "full_log=$git_log" >> $GITHUB_OUTPUT
 
-      - name: 获取上一个版本
-        id: get_previous_version
-        run: |
-          # 使用 GitHub API 获取最近的标签（按创建时间排序）
-          response=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/tags?per_page=2")
-          
-          # 提取第二个标签作为上一个版本（第一个是当前将要创建的）
-          previous_version=$(echo "$response" | jq -r '.[1].name')
-          echo "previous_version=${previous_version:-none}" >> $GITHUB_OUTPUT
-
       - name: 生成变更日志
         id: generate_changelog
         run: |
-          if [ "${{ steps.get_previous_version.outputs.previous_version }}" != "none" ]; then
-            # 获取两个版本之间的提交
-            changelog=$(git log --pretty=format:"- %h %s (%an, %ad)" --date=short \
-              ${{ steps.get_previous_version.outputs.previous_version }}..HEAD)
-            echo "changelog=${changelog}" >> $GITHUB_OUTPUT
+          # 获取所有标签（确保本地有最新标签）
+          git fetch --tags
+          
+          # 获取最新的两个标签（按时间倒序）
+          latest_tags=$(git tag --sort=-creatordate | head -n 2)
+          previous_tag=$(echo "$latest_tags" | tail -n 1)
+          current_tag="v${{ env.VERSION }}"
+          
+          # 如果存在上一个版本，生成两个版本之间的变更日志
+          if [ -n "$previous_tag" ] && [ "$previous_tag" != "$current_tag" ]; then
+            changelog=$(git log --pretty=format:"- %h %s (%an, %ad)" --date=short "$previous_tag..HEAD")
           else
-            # 如果是第一个版本，获取所有提交
+            # 如果没有上一个版本（首次发布），显示所有提交
             changelog=$(git log --pretty=format:"- %h %s (%an, %ad)" --date=short)
-            echo "changelog=${changelog}" >> $GITHUB_OUTPUT
           fi
+          
+          echo "changelog=${changelog}" >> $GITHUB_OUTPUT
 
       - name: 发布到 GitHub Releases
         uses: Kir-Antipov/mc-publish@v3.3
