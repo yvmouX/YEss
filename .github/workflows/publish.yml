@@ -58,9 +58,9 @@ jobs:
       
           # 生成变更日志内容
           if [ -n "$previous_tag" ]; then
-            full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges "$previous_tag..HEAD")
+            full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" "$previous_tag..HEAD")
           else
-            full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges)
+            full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s")
           fi
       
           # 分割日志：前5条和剩余部分
