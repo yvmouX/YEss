@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: 拉取代码
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 必须获取全部历史
 
       - name: 设置 JDK
         uses: actions/setup-java@v4
@@ -68,20 +70,39 @@ jobs:
           version: "v${{ env.VERSION }}"
           version-type: release
           files: build/libs/*.jar
-          changelog: |
-            # 🚀 Release v${{ env.VERSION }}
-
-            **Release Date**: ${{ steps.get-date.outputs.current-date }}  
-
-            ## 📦 Changes
-            ### What's Changed
-            - 
-
-            ### Full changelog
-            ${{ steps.generate_changelog.outputs.changelog }}
-
-            ## 👥 Contributors
-            - **Committer**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})  
-
-            ## 📜 Version History
-            View all releases at [Release Page](https://github.com/${{ github.repository }}/releases)
+#          changelog: |
+#            # 🚀 Release v${{ env.VERSION }}
+#
+#            **Release Date**: ${{ steps.get-date.outputs.current-date }}
+#
+#            ## 📦 Changes
+#            ### What's Changed
+#            -
+#
+#            ### Full changelog
+#            ${{ steps.generate_changelog.outputs.changelog }}
+#
+#            ## 👥 Contributors
+#            - **Committer**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})
+#
+#            ## 📜 Version History
+#            View all releases at [Release Page](https://github.com/${{ github.repository }}/releases)
+      - name: 自动生成发行说明
+        id: release-notes
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data } = await github.rest.repos.generateReleaseNotes({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: `v${process.env.VERSION}`,
+              previous_tag_name: await (async () => {
+                const tags = await github.paginate(github.rest.repos.listTags, {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  per_page: 100
+                });
+                return tags[1]?.name || '';
+              })()
+            });
+            core.setOutput('body', data.body);
