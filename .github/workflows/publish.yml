@@ -50,7 +50,7 @@ jobs:
           changelog: |
             # 更改日志
             ### Commit Message
-            ${{ env.commit_msg }}
+            ${{ env.changelog }}
           github-generate-changelog: true
 
 
