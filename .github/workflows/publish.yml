@@ -57,41 +57,34 @@ jobs:
           version-type: release
           files: build/libs/*.jar
           changelog: |
-            # 🚀 Release v${{ env.VERSION }} / 版本 v${{ env.VERSION }}
+            # 🚀 Release v${{ env.VERSION }}
 
             **Release Date**: ${{ steps.get-date.outputs.current-date }}  
-            **发布日期**: ${{ steps.get-date.outputs.current-date }}
 
-            ## 📦 Changes / 变更内容
-            ### Latest commit / 最新提交
+            ## 📦 Changes
+            ### Latest commit
             ```plaintext
-            ${{ github.event.head_commit.message || 'No commit message provided / 无提交信息' }}
+            ${{ github.event.head_commit.message || 'No commit message provided' }}
             ```
 
-            ### Full changelog / 完整变更记录
+            ### Full changelog
             <details>
-            <summary>Click to expand / 点击展开</summary>
+            <summary>Click to expand</summary>
 
             ```bash
-            ${{ steps.git-log.outputs.full_log || 'No detailed changelog generated / 未生成详细变更记录' }}
+            ${{ steps.git-log.outputs.full_log || 'No detailed changelog generated' }}
             ```
 
             </details>
 
-            ## 👥 Contributors / 贡献者
+            ## 👥 Contributors
             - **Committer**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})  
-              **提交者**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})
             - **Triggered by**: [${{ github.actor }}](https://github.com/${{ github.actor }})  
-              **触发者**: [${{ github.actor }}](https://github.com/${{ github.actor }})
 
-            ## ⚙️ Build Info / 构建信息
+            ## ⚙️ Build Info
             - **Build Number**: [${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})  
-              **构建编号**: [${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
             - **Source Version**: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})  
-              **源码版本**: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
             - **Build Time**: ${{ steps.get-date.outputs.current-time }}  
-              **构建时间**: ${{ steps.get-date.outputs.current-time }}
 
-            ## 📜 Version History / 版本历史
+            ## 📜 Version History
             View all releases at [Release Page](https://github.com/${{ github.repository }}/releases)  
-            查看所有版本请访问 [发布页面](https://github.com/${{ github.repository }}/releases)
