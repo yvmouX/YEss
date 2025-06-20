@@ -54,13 +54,13 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { data } = await github.repos.generateReleaseNotes({
+            const response = await github.request('POST /repos/{owner}/{repo}/releases/generate-notes', {
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: `v${process.env.VERSION}`,
               previous_tag_name: `${{ steps.get_tags.outputs.previous_tag }}`
             });
-            core.setOutput('body', data.body);
+            core.setOutput('body', response.data.body);
 
       - name: 发布到 GitHub Releases
         uses: Kir-Antipov/mc-publish@v3.3
