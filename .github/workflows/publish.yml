@@ -19,8 +19,8 @@ jobs:
       - name: 提取插件版本号
         id: extract_version
         run: |
-          # 从 plugin.yml 中提取版本号，并写入环境变量 VERSION
-          VERSION=$(grep '^version:' src/main/resources/plugin.yml | awk '{print $2}')
+          # 从 build.gradle 中提取版本号，并写入环境变量 VERSION
+          VERSION=$(grep "^version *= *['\"]" build.gradle | head -n1 | sed "s/.*version *= *['\"]\\(.*\\)['\"].*/\\1/")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: 确保 gradlew 可执行
