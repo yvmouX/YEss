@@ -20,9 +20,6 @@ jobs:
           distribution: zulu
           java-version: 21
 
-#      - name: 设置 Gradle
-#        uses: gradle/actions/setup-gradle@v3
-
       - name: 提取插件版本号
         id: extract_version
         run: |
@@ -47,17 +44,6 @@ jobs:
         run: |
           git_log=$(git log -5 --pretty=format:"- %h %s (%an, %ad)" --date=short)
           echo "full_log=$git_log" >> $GITHUB_OUTPUT
-
-      - name: Generate Changelog
-        id: changelog
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          # 通过API获取PR数据
-          PR_DATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls?state=closed&base=main")
-          # 处理PR数据
-          PR_LIST=$(echo "$PR_DATA" | jq -r '.[] | select(.merged_at != null) | "* \(.title) by @\(.user.login) in \(.html_url)"')
       
       - name: 发布到 GitHub Releases
         uses: Kir-Antipov/mc-publish@v3.3
@@ -67,33 +53,29 @@ jobs:
           version: "v${{ env.VERSION }}"
           version-type: release
           files: build/libs/*.jar
-          # changelog: |
-          #   # 🚀 版本 v${{ env.VERSION }} 发布说明
+          changelog: |
+            # 🚀 Release v${{ env.VERSION }}
 
-          #   **发布日期**: ${{ steps.get-date.outputs.current-date }}
+            **Release Date**: ${{ steps.get-date.outputs.current-date }}  
 
-          #   ## 📦 变更内容
-          #   ### 最新提交
-          #   ```plaintext
-          #   ${{ github.event.head_commit.message || 'No commit message provided' }}
-          #   ```
+            ## 📦 Changes
+            ### Latest commit
+            ```plaintext
+            ${{ github.event.head_commit.message || 'No commit message provided' }}
+            ```
 
-          #   ### 完整变更记录
-          #   <details>
-          #   <summary>点击展开查看完整 Git 记录</summary>
+            ### Full changelog
+            <details>
+            <summary>Click to expand</summary>
 
-          #   ```bash
-          #   ${{ steps.git-log.outputs.full_log || 'No detailed changelog generated' }}
-          #   ```
+            ```bash
+            ${{ steps.git-log.outputs.full_log || 'No detailed changelog generated' }}
+            ```
 
-          #   </details>
+            </details>
 
-          #   ## 👥 贡献者
-          #   - **提交者**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})
-          #   - **触发者**: [${{ github.actor }}](https://github.com/${{ github.actor }})
-            
-          #   ## New Contributors
-          #   - @Findoutsider made their first contribution in #1
-            
-          #   ## 📜 版本历史
-          #   查看所有版本请访问 [Release Page](https://github.com/${{ github.repository }}/releases)
+            ## 👥 Contributors
+            - **Committer**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})  
+
+            ## 📜 Version History
+            View all releases at [Release Page](https://github.com/${{ github.repository }}/releases)
