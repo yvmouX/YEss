@@ -88,7 +88,7 @@ jobs:
             remaining_count=$(echo "$remaining" | grep -c '^-' || echo 0)
             changelog="$first_five
           <details>
-          <summary>查看其余 $remaining_count 项更改</summary>
+          <summary>View remaining $remaining_count changes</summary>
 
           $remaining
           </details>"
@@ -110,6 +110,8 @@ jobs:
           changelog: |
             # 🚀 Release v${{ env.VERSION }}
             **Release Date**: ${{ steps.get-date.outputs.current-date }}
+            **Support Version**: 1.13+
+            **Java Version**: 17+
 
             ## Commit Message
             ${{ steps.generate_changelog.outputs.changelog }}
