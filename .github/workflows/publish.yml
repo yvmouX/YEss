@@ -44,32 +44,31 @@ jobs:
       - name: 生成变更日志
         id: generate_changelog
         run: |
-          # 获取所有标签
-          git fetch --tags
-
-          # 获取最新两个标签
-          mapfile -t tags < <(git tag --sort=-creatordate | head -n 2)
-          previous_tag=${tags[1]}
+          # 获取仓库URL和标签
+          repo_url="https://github.com/${{ github.repository }}"
           current_tag="v${{ env.VERSION }}"
-          repo_url="https://github.com/${{ github.repository }}/commit"
-
-          # 生成变更日志
-          if [ -n "$previous_tag" ] && [ "$previous_tag" != "$current_tag" ]; then
-            echo "生成变更日志: $previous_tag..HEAD"
-            changelog=$(git log --pretty=format:"[%h]($repo_url/%H) %s" --no-merges "$previous_tag..HEAD")
+          
+          # 获取上一个标签
+          git fetch --tags
+          previous_tag=$(git describe --tags --abbrev=0 "$current_tag^" 2>/dev/null || echo "")
+          
+          # 生成Markdown格式的变更日志
+          if [ -n "$previous_tag" ]; then
+            echo "生成变更日志范围: $previous_tag..HEAD"
+            changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges "$previous_tag..HEAD")
           else
             echo "生成完整变更日志 (首次发布)"
-            changelog=$(git log --pretty=format:"[%h]($repo_url/%H) %s" --no-merges)
+            changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges)
           fi
-
-          # 转义多行文本
-          changelog="${changelog//'%'/'%25'}"
-          changelog="${changelog//$'\n'/'%0A'}"
-          changelog="${changelog//$'\r'/'%0D'}"
-
-          echo "changelog=${changelog}" >> $GITHUB_OUTPUT
+          
+          # 直接输出多行文本（不再需要URL编码）
+          delimiter="EOF_$(date +%s)"
+          echo "changelog<<$delimiter" >> $GITHUB_OUTPUT
+          echo "$changelog" >> $GITHUB_OUTPUT
+          echo "$delimiter" >> $GITHUB_OUTPUT
+          
           echo "生成的变更日志预览:"
-          echo "${changelog//%0A/$'\n'}"
+          echo "$changelog"
 
       - name: 发布到 GitHub Releases
         uses: Kir-Antipov/mc-publish@v3.3
