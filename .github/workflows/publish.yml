@@ -105,6 +105,8 @@ jobs:
             ### 📝 Commit Message
             ${{ steps.generate_changelog.outputs.changelog }}
 
+            ### Full Changelog: [v${{ setps.generate_changelog.outputs.previous_tag }}...v${{ env.VERSION }}](https://github.com/${{ github.repository }}/commits/v${{ setps.generate_changelog.outputs.previous_tag }}...v${{ env.VERSION }})
+
             ## 👥 Contributors
             - **Committer**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})
 
