@@ -38,5 +38,4 @@ jobs:
           version-type: release                      # 发布类型为正式版
           files: build/libs/*.jar                    # 上传的 jar 文件路径
           changelog: |
-            ## 变更日志
             $CHANGES

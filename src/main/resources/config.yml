@@ -4,50 +4,50 @@ version: ${version}
 registerCommand:
   reload:
     enable: true
-    alias: "none"
-    permission: "yess.command.reload"
+    alias: none
+    permission: yess.command.reload
   help:
     enable: true
-    alias: "none"
-    permission: "yess.command.help"
+    alias: none
+    permission: yess.command.help
   craft:
     enable: true
-    alias: "craft, c"
-    permission: "yess.command.craft"
+    alias: craft, c
+    permission: yess.command.craft
   ec:
     enable: true
-    alias: "enderchest, ec"
-    permission: "yess.command.ec"
+    alias: enderchest, ec
+    permission: yess.command.ec
   glow:
     enable: true
-    alias: "glow"
-    permission: "yess.command.glow"
+    alias: glow
+    permission: yess.command.glow
   gift:
     enable: true
-    alias: "gift"
-    permission: "yess.command.gift"
+    alias: gift
+    permission: yess.command.gift
   team:
     enable: true
-    alias: "team"
-    permission: "yess.command.team"
+    alias: team
+    permission: yess.command.team
 
 # 存储类型: yaml, mysql 或 sqlite
 storage:
-  type: "yaml"  # 目前仅支持yaml，填写其他类型无效
+  type: yaml # 目前仅支持yaml，填写其他类型无效
 
   # MySQL配置 (当storage.type=mysql时使用)
   mysql:
-    host: "localhost"
+    host: localhost
     port: 3306
-    database: "minecraft"
-    username: "root"
-    password: "password"
+    database: minecraft
+    username: root
+    password: password
 
 # 门
 portal:
-  world: "spawn"
+  world: spawn
   command:
-    - "multiverse-core:mv tp %player% afk"
+    - multiverse-core:mv tp %player% afk
   regionMin:
     x: 43
     y: 72
