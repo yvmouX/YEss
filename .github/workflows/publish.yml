@@ -49,86 +49,18 @@ jobs:
           echo "current_tag=${current_tag}" >> $GITHUB_OUTPUT
           echo "previous_tag=${previous_tag}" >> $GITHUB_OUTPUT
 
-      - name: 生成变更日志
-        id: generate_changelog
-        run: |
-          repo_url="https://github.com/${{ github.repository }}"
-          current_tag="v${{ env.VERSION }}"
-          previous_tag="${{ steps.get_tags.outputs.previous_tag }}"
-      
-          # 生成变更日志内容
-          if [ -n "$previous_tag" ]; then
-            full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" "$previous_tag..HEAD")
-          else
-            full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s")
-          fi
-      
-          # 分割日志：前5条和剩余部分
-          first_five=$(echo "$full_changelog" | head -n 5)
-          remaining=$(echo "$full_changelog" | tail -n +6)
-          remaining_count=$(echo "$remaining" | grep -c '^- ' || echo 0)
-      
-          # 组装最终日志
-          if [ $remaining_count -gt 0 ]; then
-            changelog="$first_five
-          <details>
-          <summary>Click to expand remaining $remaining_count changes</summary>
-          
-          $remaining
-          </details>"
-          else
-            changelog="$full_changelog"
-          fi
-      
-          # 正确输出多行内容
-          delimiter="EOF_$(date +%s)"
-          {
-            echo "changelog<<$delimiter"
-            echo "$changelog"
-            echo "$delimiter"
-          } >> $GITHUB_OUTPUT
-
-      - name: 生成PR变更日志
-        id: generate_pr_changelog
-        run: |
-          repo_url="https://github.com/${{ github.repository }}"
-          current_tag="v${{ env.VERSION }}"
-          previous_tag="${{ steps.get_tags.outputs.previous_tag }}"
-
-          if [ -n "$previous_tag" ]; then
-            log_range="$previous_tag..HEAD"
-          else
-            log_range="HEAD"
-          fi
-
-          pr_list=""
-          # 处理 merge commit 方式
-          merge_prs=$(git log --merges --pretty=format:"%s|%b|%an" $log_range | grep -E "Merge pull request" || true)
-          while IFS='|' read -r subject body author; do
-            pr_number=$(echo "$subject" | grep -oE "#([0-9]+)" | tr -d '#')
-            pr_title=$(echo "$body" | head -n1)
-            if [ -n "$pr_number" ]; then
-              pr_list="$pr_list* ${pr_title:-PR #$pr_number} by @$author in $repo_url/pull/$pr_number\n"
-            fi
-          done <<< "$merge_prs"
-
-          # 处理 squash merge 方式（commit message 里带 (#PR号)）
-          squash_prs=$(git log --pretty=format:"%s|%an" $log_range | grep -E "\(#([0-9]+)\)" || true)
-          while IFS='|' read -r subject author; do
-            pr_number=$(echo "$subject" | grep -oE "#([0-9]+)" | tr -d '#')
-            pr_title=$(echo "$subject" | sed -E 's/ \(#([0-9]+)\)//')
-            # 避免重复添加merge commit已处理过的PR
-            if ! echo "$pr_list" | grep -q "/pull/$pr_number"; then
-              pr_list="$pr_list* $pr_title by @$author in $repo_url/pull/$pr_number\n"
-            fi
-          done <<< "$squash_prs"
-
-          # 如果没有PR，给出提示
-          if [ -z "$pr_list" ]; then
-            pr_list="(本次发布未检测到PR合并)"
-          fi
-
-          echo -e "pr_changelog<<EOF\n$pr_list\nEOF" >> $GITHUB_OUTPUT
+      - name: 自动生成 GitHub 风格的 Release Notes
+        id: github_release_notes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data } = await github.repos.generateReleaseNotes({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: `v${process.env.VERSION}`,
+              previous_tag_name: `${{ steps.get_tags.outputs.previous_tag }}`
+            });
+            core.setOutput('body', data.body);
 
       - name: 发布到 GitHub Releases
         uses: Kir-Antipov/mc-publish@v3.3
@@ -143,16 +75,7 @@ jobs:
 
             **Release Date**: ${{ steps.get-date.outputs.current-date }}
 
-            ## 📦 What's Changed
-            ${{ steps.generate_pr_changelog.outputs.pr_changelog }}
-
-            ### Commit Message
-            ${{ steps.generate_changelog.outputs.changelog }}
-
-            ### Full Changelog: [${{ steps.get_tags.outputs.previous_tag }}...${{ steps.get_tags.outputs.current_tag }}](https://github.com/${{ github.repository }}/compare/${{ steps.get_tags.outputs.previous_tag }}...${{ steps.get_tags.outputs.current_tag }})
-
-            ## 👥 Contributors
-            - **Committer**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})
+            ${{ steps.github_release_notes.outputs.body }}
 
             ## 📜 Version History
             View all releases at [Release Page](https://github.com/${{ github.repository }}/releases)
