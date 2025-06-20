@@ -60,16 +60,21 @@ jobs:
             # 🚀 Release v${{ env.VERSION }}
 
             **Release Date**: ${{ steps.get-date.outputs.current-date }}  
+            **Build Number**: [${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})  
+            **Source Version**: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
 
-            ## 📦 Changes
-            ### Latest commit
+            ---
+
+            ## 📦 What's Changed
+
+            ### Latest Commit
             ```plaintext
             ${{ github.event.head_commit.message || 'No commit message provided' }}
             ```
 
-            ### Full changelog
+            ### Detailed Changelog
             <details>
-            <summary>Click to expand</summary>
+            <summary>Show full commit history</summary>
 
             ```bash
             ${{ steps.git-log.outputs.full_log || 'No detailed changelog generated' }}
@@ -77,14 +82,15 @@ jobs:
 
             </details>
 
+            ---
+
             ## 👥 Contributors
-            - **Committer**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})  
-            - **Triggered by**: [${{ github.actor }}](https://github.com/${{ github.actor }})  
+            - **Committer**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})
+            - **Triggered by**: [${{ github.actor }}](https://github.com/${{ github.actor }})
+            - **Build Time**: ${{ steps.get-date.outputs.current-time }}
 
-            ## ⚙️ Build Info
-            - **Build Number**: [${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})  
-            - **Source Version**: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})  
-            - **Build Time**: ${{ steps.get-date.outputs.current-time }}  
+            ---
 
-            ## 📜 Version History
-            View all releases at [Release Page](https://github.com/${{ github.repository }}/releases)  
+            ## 🔗 Additional Information
+            - View full version history: [Releases Page](https://github.com/${{ github.repository }}/releases)
+            - Report issues: [Issues Tracker](https://github.com/${{ github.repository }}/issues)
