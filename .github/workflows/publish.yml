@@ -52,27 +52,30 @@ jobs:
           git fetch --tags
           previous_tag=$(git describe --tags --abbrev=0 "$current_tag^" 2>/dev/null || echo "")
           
-          # 生成变更日志内容
+          # 生成完整的变更日志
           if [ -n "$previous_tag" ]; then
             echo "生成变更日志范围: $previous_tag..HEAD"
-            raw_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges "$previous_tag..HEAD")
+            full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges "$previous_tag..HEAD")
           else
             echo "生成完整变更日志 (首次发布)"
-            raw_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges)
+            full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges)
           fi
           
-          # 计算提交数量
-          commit_count=$(echo "$raw_changelog" | grep -c '^-')
+          # 分割日志：前5条和剩余部分
+          first_five=$(echo "$full_changelog" | head -n 5)
+          remaining=$(echo "$full_changelog" | tail -n +6)
+          remaining_count=$(echo "$remaining" | grep -c '^-' || echo 0)
           
-          # 根据数量决定是否折叠
-          if [ $commit_count -gt 5 ]; then
-            changelog="<details>
-            <summary>点击展开查看全部 $commit_count 项变更</summary>
-            
-            $raw_changelog
-            </details>"
+          # 组装最终日志
+          if [ $remaining_count -gt 0 ]; then
+            changelog="$first_five
+          <details>
+          <summary>Click to expand remaining $remaining_count changes</summary>
+
+          $remaining
+          </details>"
           else
-            changelog="$raw_changelog"
+            changelog="$full_changelog"
           fi
           
           # 输出结果
