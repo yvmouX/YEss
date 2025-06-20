@@ -62,51 +62,51 @@ jobs:
             });
             core.setOutput('body', response.data.body);
 
-            - name: 生成变更日志
-            id: generate_changelog
-            run: |
-              # 获取仓库URL和标签
-              repo_url="https://github.com/${{ github.repository }}"
-              current_tag="v${{ env.VERSION }}"
-              
-              # 获取上一个标签
-              git fetch --tags
-              previous_tag=$(git describe --tags --abbrev=0 "$current_tag^" 2>/dev/null || echo "")
-              
-              # 生成完整的变更日志
-              if [ -n "$previous_tag" ]; then
-                echo "生成变更日志范围: $previous_tag..HEAD"
-                full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges "$previous_tag..HEAD")
-              else
-                echo "生成完整变更日志 (首次发布)"
-                full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges)
-              fi
-              
-              # 分割日志：前5条和剩余部分
-              first_five=$(echo "$full_changelog" | head -n 5)
-              remaining=$(echo "$full_changelog" | tail -n +6)
-              remaining_count=$(echo "$remaining" | grep -c '^-' || echo 0)
-              
-              # 组装最终日志
-              if [ $remaining_count -gt 0 ]; then
-                changelog="$first_five
-              <details>
-              <summary>Click to expand remaining $remaining_count changes</summary>
+      - name: 生成变更日志
+        id: generate_changelog
+        run: |
+          # 获取仓库URL和标签
+          repo_url="https://github.com/${{ github.repository }}"
+          current_tag="v${{ env.VERSION }}"
+          
+          # 获取上一个标签
+          git fetch --tags
+          previous_tag=$(git describe --tags --abbrev=0 "$current_tag^" 2>/dev/null || echo "")
+          
+          # 生成完整的变更日志
+          if [ -n "$previous_tag" ]; then
+            echo "生成变更日志范围: $previous_tag..HEAD"
+            full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges "$previous_tag..HEAD")
+          else
+            echo "生成完整变更日志 (首次发布)"
+            full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges)
+          fi
+          
+          # 分割日志：前5条和剩余部分
+          first_five=$(echo "$full_changelog" | head -n 5)
+          remaining=$(echo "$full_changelog" | tail -n +6)
+          remaining_count=$(echo "$remaining" | grep -c '^-' || echo 0)
+          
+          # 组装最终日志
+          if [ $remaining_count -gt 0 ]; then
+            changelog="$first_five
+          <details>
+          <summary>Click to expand remaining $remaining_count changes</summary>
     
-              $remaining
-              </details>"
-              else
-                changelog="$full_changelog"
-              fi
-              
-              # 输出结果
-              delimiter="EOF_$(date +%s)"
-              {
-                echo "changelog<<$delimiter"
-                echo "$changelog"
-                echo "$delimiter"
-                echo "previous_tag=${previous_tag}"
-              } >> $GITHUB_OUTPUT    
+          $remaining
+          </details>"
+          else
+            changelog="$full_changelog"
+          fi
+          
+          # 输出结果
+          delimiter="EOF_$(date +%s)"
+          {
+            echo "changelog<<$delimiter"
+            echo "$changelog"
+            echo "$delimiter"
+            echo "previous_tag=${previous_tag}"
+          } >> $GITHUB_OUTPUT    
 
       - name: 发布到 GitHub Releases
         uses: Kir-Antipov/mc-publish@v3.3
