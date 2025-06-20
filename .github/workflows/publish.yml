@@ -12,9 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
-          fetch-depth: 2  # 只拉取最近两次提交，便于比较变更
+          distribution: zulu
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
       - name: 提取插件版本号
         id: extract_version
@@ -23,15 +30,15 @@ jobs:
           VERSION=$(grep "^version *= *['\"]" build.gradle | head -n1 | sed "s/.*version *= *['\"]\\(.*\\)['\"].*/\\1/")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       
-      - name: 缓存 Gradle 依赖
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
+      # - name: 缓存 Gradle 依赖
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: |
+      #       ~/.gradle/caches
+      #       ~/.gradle/wrapper
+      #     key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+      #     restore-keys: |
+      #       gradle-${{ runner.os }}-
 
       - name: 确保 gradlew 可执行
         run: chmod +x ./gradlew
@@ -40,7 +47,7 @@ jobs:
         run: ./gradlew build
 
       - name: 发布到 GitHub Releases
-        uses: Kir-Antipov/mc-publish@v3
+        uses: Kir-Antipov/mc-publish@v3.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-tag: "v${{ env.VERSION }}"
@@ -49,8 +56,10 @@ jobs:
           files: build/libs/*.jar
           changelog: |
             # 更改日志
-            ### Commit Message
-            ${{ env.changelog }}
-          github-generate-changelog: true
+            ## 最新提交
+            ${{ github.event.head_commit.message }}
+            ## 完整提交信息
+            ${{ format('{0}', github.event.head_commit.message) }}
+          # github-generate-changelog: true
 
 
