@@ -20,8 +20,8 @@ jobs:
           distribution: zulu
           java-version: 21
 
-      - name: 设置 Gradle
-        uses: gradle/actions/setup-gradle@v3
+#      - name: 设置 Gradle
+#        uses: gradle/actions/setup-gradle@v3
 
       - name: 提取插件版本号
         id: extract_version
@@ -47,29 +47,15 @@ jobs:
         run: |
           git_log=$(git log -5 --pretty=format:"- %h %s (%an, %ad)" --date=short)
           echo "full_log=$git_log" >> $GITHUB_OUTPUT
-      
-      - name: 生成专业版Changelog
-        id: generate-changelog
+
+      - name: Generate Changelog
+        id: changelog
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
-          # 获取PR合并记录 (需要GH CLI)
-          PR_LIST=$(gh pr list --state merged --base main --json number,title,author,mergeCommit,url --jq '.[] | "* \(.title) by @\(.author.login) in \(.url)"')
-          
-          # 获取首次贡献者
-          FIRST_CONTRIBUTORS=$(gh api repos/${{ github.repository }}/pulls --jq '.[] | select(.merged_at != null) | .user.login' | sort | uniq)
-          
-          # 生成changelog
-          CHANGELOG="# 更改日志 ${{ env.VERSION }}\n\n"
-          CHANGELOG+="## What's Changed\n"
-          CHANGELOG+="$PR_LIST\n\n"
-          CHANGELOG+="## New Contributors\n"
-          for user in $FIRST_CONTRIBUTORS; do
-            FIRST_PR=$(gh pr list --state merged --author $user --json url --jq '.[0].url')
-            CHANGELOG+="* @$user made their first contribution in $FIRST_PR\n"
-          done
-          CHANGELOG+="\n**Full Changelog**: https://github.com/${{ github.repository }}/commits/v${{ env.VERSION }}"
-          
-          echo "$CHANGELOG" > CHANGELOG.md
-          echo "changelog=$(cat CHANGELOG.md)" >> $GITHUB_OUTPUT
+          # 通过API获取PR数据
+          PR_DATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls?state=closed&base=main")
       
       - name: 发布到 GitHub Releases
         uses: Kir-Antipov/mc-publish@v3.3
