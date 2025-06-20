@@ -18,6 +18,9 @@ jobs:
           VERSION=$(grep '^version:' src/main/resources/plugin.yml | awk '{print $2}')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
+      - name: 确保 gradlew 可执行
+        run: chmod +x ./gradlew
+
       - name: 构建插件
         run: ./gradlew build  # 使用 Gradle 构建插件
 
