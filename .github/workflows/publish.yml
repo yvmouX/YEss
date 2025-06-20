@@ -57,40 +57,15 @@ jobs:
           version-type: release
           files: build/libs/*.jar
           changelog: |
-            # 🚀 Release v${{ env.VERSION }}
-
-            **Release Date**: ${{ steps.get-date.outputs.current-date }}  
-            **Build Number**: [${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})  
-            **Source Version**: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-
-            ---
-
-            ## 📦 What's Changed
-
-            ### Latest Commit
-            ```plaintext
-            ${{ github.event.head_commit.message || 'No commit message provided' }}
-            ```
-
-            ### Detailed Changelog
-            <details>
-            <summary>Show full commit history</summary>
-
-            ```bash
-            ${{ steps.git-log.outputs.full_log || 'No detailed changelog generated' }}
-            ```
-
-            </details>
-
-            ---
-
-            ## 👥 Contributors
-            - **Committer**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})
-            - **Triggered by**: [${{ github.actor }}](https://github.com/${{ github.actor }})
-            - **Build Time**: ${{ steps.get-date.outputs.current-time }}
-
-            ---
-
-            ## 🔗 Additional Information
-            - View full version history: [Releases Page](https://github.com/${{ github.repository }}/releases)
-            - Report issues: [Issues Tracker](https://github.com/${{ github.repository }}/issues)
+            # ${{ env.PROJECT_NAME || '项目名称' }} ${{ env.VERSION }} - ${GITHUB_SHA::7}
+            
+            **版本号:** ${{ env.VERSION }} | 提交 **${GITHUB_SHA::7}**  
+            **下载地址:** ${{ env.PROJECT_NAME || '项目' }}@${{ env.VERSION }}-${GITHUB_SHA::7}  
+            
+            此版本由 GitHub Actions 自动构建  
+            
+            ## 提交信息
+            
+            [ **${GITHUB_SHA::7}** ] ${{ github.event.head_commit.message || '无重要变更' }}  
+            
+            **完整变更记录:** ${{ env.PREVIOUS_VERSION || '1.0.0' }}...${{ env.VERSION }}-${GITHUB_SHA::7}
