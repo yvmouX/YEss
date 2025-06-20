@@ -105,7 +105,7 @@ public class TeamM {
                 targetPlayer.sendMessage("§c来自玩家 " + inviterName + " 组队邀请已过期");
                 senderPlayer.sendMessage("§c你发送的的组队邀请已过期");
             }
-        }, 20 * 5);
+        }, 20 * 120);
     }
 
     public void acceptTeam(Player senderPlayer) {
