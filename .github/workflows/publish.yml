@@ -34,8 +34,10 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}  # GitHub 自动注入的 Token，用于发布 Release
           github-tag: "v${{ env.VERSION }}"         # 发布的 tag，格式如 v1.0.0
-          version: "${{ env.VERSION }}"             # 插件版本号
+          github-generate-changelog: true
+          version: "v${{ env.VERSION }}"             # 插件版本号
           version-type: release                      # 发布类型为正式版
           files: build/libs/*.jar                    # 上传的 jar 文件路径
           changelog: |
+            # 更改日志1
             $CHANGES
