@@ -2,14 +2,14 @@ name: 发布Releases
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:    # 只允许手动触发
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
   publish:
-    runs-on: ubuntu-latest  # 使用最新版 Ubuntu 作为运行环境
+    runs-on: ubuntu-latest
     steps:
       - name: 拉取代码
         uses: actions/checkout@v3
@@ -22,26 +22,35 @@ jobs:
           # 从 build.gradle 中提取版本号，并写入环境变量 VERSION
           VERSION=$(grep "^version *= *['\"]" build.gradle | head -n1 | sed "s/.*version *= *['\"]\\(.*\\)['\"].*/\\1/")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+      
+      - name: 缓存 Gradle 依赖
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
 
       - name: 确保 gradlew 可执行
         run: chmod +x ./gradlew
 
       - name: 构建插件
-        run: ./gradlew build  # 使用 Gradle 构建插件
+        run: ./gradlew build
 
       - name: 发布到 GitHub Releases
         uses: Kir-Antipov/mc-publish@v3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}  # GitHub 自动注入的 Token，用于发布 Release
-          github-tag: "v${{ env.VERSION }}"         # 发布的 tag，格式如 v1.0.0
-          version: "v${{ env.VERSION }}"             # 插件版本号
-          version-type: release                      # 发布类型为正式版
-          files: build/libs/*.jar                    # 上传的 jar 文件路径
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-tag: "v${{ env.VERSION }}"
+          version: "v${{ env.VERSION }}"
+          version-type: release
+          files: build/libs/*.jar
           changelog: |
             # 更改日志
             ### Commit Message
             ${{ env.commit_msg }}
-            artifacts: ${{ env.jar_dir }}
           github-generate-changelog: true
 
 
