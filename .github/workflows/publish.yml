@@ -57,37 +57,41 @@ jobs:
           version-type: release
           files: build/libs/*.jar
           changelog: |
-            # 🚀 版本 v${{ env.VERSION }} 发布说明
+            # 🚀 Release v${{ env.VERSION }} / 版本 v${{ env.VERSION }}
 
+            **Release Date**: ${{ steps.get-date.outputs.current-date }}  
             **发布日期**: ${{ steps.get-date.outputs.current-date }}
 
-            ## 📦 变更内容
-            ### 最新提交
+            ## 📦 Changes / 变更内容
+            ### Latest commit / 最新提交
             ```plaintext
-            ${{ github.event.head_commit.message || 'No commit message provided' }}
+            ${{ github.event.head_commit.message || 'No commit message provided / 无提交信息' }}
             ```
 
-            ### 完整变更记录
+            ### Full changelog / 完整变更记录
             <details>
-            <summary>点击展开查看完整 Git 记录</summary>
+            <summary>Click to expand / 点击展开</summary>
 
             ```bash
-            ${{ steps.git-log.outputs.full_log || 'No detailed changelog generated' }}
+            ${{ steps.git-log.outputs.full_log || 'No detailed changelog generated / 未生成详细变更记录' }}
             ```
 
             </details>
 
-            ## 👥 贡献者
-            - **提交者**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})
-            - **触发者**: [${{ github.actor }}](https://github.com/${{ github.actor }})
+            ## 👥 Contributors / 贡献者
+            - **Committer**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})  
+              **提交者**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})
+            - **Triggered by**: [${{ github.actor }}](https://github.com/${{ github.actor }})  
+              **触发者**: [${{ github.actor }}](https://github.com/${{ github.actor }})
 
-            ## ⚙️ 构建信息
-            - **构建编号**: [${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            - **源码版本**: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-            - **构建时间**: ${{ steps.get-date.outputs.current-time }}
+            ## ⚙️ Build Info / 构建信息
+            - **Build Number**: [${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})  
+              **构建编号**: [${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            - **Source Version**: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})  
+              **源码版本**: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+            - **Build Time**: ${{ steps.get-date.outputs.current-time }}  
+              **构建时间**: ${{ steps.get-date.outputs.current-time }}
 
-            ## 📜 版本历史
-            查看所有版本请访问 [Release Page](https://github.com/${{ github.repository }}/releases)
-            
-
-
+            ## 📜 Version History / 版本历史
+            View all releases at [Release Page](https://github.com/${{ github.repository }}/releases)  
+            查看所有版本请访问 [发布页面](https://github.com/${{ github.repository }}/releases)
