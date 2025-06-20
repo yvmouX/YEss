@@ -41,51 +41,51 @@ jobs:
           echo "current-date=$(date '+%Y-%m-%d')" >> $GITHUB_OUTPUT
           echo "current-time=$(date '+%H:%M:%S %Z')" >> $GITHUB_OUTPUT
 
+      - name: 获取上一个版本标签
+        id: get_previous_tag
+        run: |
+          git fetch --tags
+          current_tag="v${{ env.VERSION }}"
+          # 获取上一个非当前版本的标签
+          previous_tag=$(git describe --tags --abbrev=0 "$current_tag^" 2>/dev/null || echo "")
+          echo "previous_tag=${previous_tag}" >> $GITHUB_OUTPUT
+
       - name: 生成变更日志
         id: generate_changelog
         run: |
-          # 获取仓库URL和标签
           repo_url="https://github.com/${{ github.repository }}"
           current_tag="v${{ env.VERSION }}"
-          
-          # 获取上一个标签
-          git fetch --tags
-          previous_tag=$(git describe --tags --abbrev=0 "$current_tag^" 2>/dev/null || echo "")
-          
-          # 生成完整的变更日志
+          previous_tag="${{ steps.get_previous_tag.outputs.previous_tag }}"
+
+          # 生成变更日志内容
           if [ -n "$previous_tag" ]; then
-            echo "生成变更日志范围: $previous_tag..HEAD"
             full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges "$previous_tag..HEAD")
           else
-            echo "生成完整变更日志 (首次发布)"
             full_changelog=$(git log --pretty=format:"- [%h]($repo_url/commit/%H) %s" --no-merges)
           fi
-          
+
           # 分割日志：前5条和剩余部分
           first_five=$(echo "$full_changelog" | head -n 5)
           remaining=$(echo "$full_changelog" | tail -n +6)
           remaining_count=$(echo "$remaining" | grep -c '^-' || echo 0)
-          
+
           # 组装最终日志
           if [ $remaining_count -gt 0 ]; then
             changelog="$first_five
           <details>
           <summary>Click to expand remaining $remaining_count changes</summary>
-
+    
           $remaining
           </details>"
           else
-            changelog="$full_changelog"
+          changelog="$full_changelog"
           fi
-          
+      
           # 输出结果
           delimiter="EOF_$(date +%s)"
           echo "changelog<<$delimiter" >> $GITHUB_OUTPUT
           echo "$changelog" >> $GITHUB_OUTPUT
           echo "$delimiter" >> $GITHUB_OUTPUT
-          
-          echo "生成的变更日志预览:"
-          echo "$changelog"
 
       - name: 发布到 GitHub Releases
         uses: Kir-Antipov/mc-publish@v3.3
@@ -95,6 +95,7 @@ jobs:
           version: "v${{ env.VERSION }}"
           version-type: release
           files: build/libs/*.jar
+          #             ### Full Changelog: [v${{ steps.generate_changelog.outputs.previous_tag..HEAD }}...v${{ env.VERSION }}](https://github.com/${{ github.repository }}/compare/v${{ steps.generate_changelog.outputs.previous_tag..HEAD }}...v${{ env.VERSION }})
           changelog: |
             # 🚀 Release v${{ env.VERSION }}
 
@@ -104,8 +105,9 @@ jobs:
 
             ### 📝 Commit Message
             ${{ steps.generate_changelog.outputs.changelog }}
+            
+            ${{ fromJSON(format('{0}', steps.get_previous_tag.outputs.previous_tag != '' && format('### Full Changelog: [v{0}...v{1}](https://github.com/{2}/compare/v{0}...v{1})', steps.get_previous_tag.outputs.previous_tag, env.VERSION, github.repository) || '') }}
 
-            ### Full Changelog: [v${{ steps.generate_changelog.outputs.previous_tag..HEAD }}...v${{ env.VERSION }}](https://github.com/${{ github.repository }}/compare/v${{ steps.generate_changelog.outputs.previous_tag..HEAD }}...v${{ env.VERSION }})
 
             ## 👥 Contributors
             - **Committer**: [${{ github.event.head_commit.author.name }}](https://github.com/${{ github.event.head_commit.author.username || 'unknown' }})
