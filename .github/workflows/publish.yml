@@ -1,4 +1,4 @@
-name: 发布 Minecraft 插件
+name: 发布 Minecraft 插件 
 on:
   push:
     branches: [ main ]
