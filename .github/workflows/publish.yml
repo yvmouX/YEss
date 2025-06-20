@@ -56,6 +56,8 @@ jobs:
           # 通过API获取PR数据
           PR_DATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/pulls?state=closed&base=main")
+          # 处理PR数据
+          PR_LIST=$(echo "$PR_DATA" | jq -r '.[] | select(.merged_at != null) | "* \(.title) by @\(.user.login) in \(.html_url)"')
       
       - name: 发布到 GitHub Releases
         uses: Kir-Antipov/mc-publish@v3.3
