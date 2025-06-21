@@ -7,6 +7,7 @@ import cn.yvmou.yess.managers.GlowM;
 import cn.yvmou.yess.storage.Storage;
 import cn.yvmou.yess.utils.LoggerUtils;
 import cn.yvmou.yess.utils.Metrics;
+import cn.yvmou.yess.utils.UpdateChecker;
 import cn.yvmou.yess.utils.manager.CommandManager;
 import cn.yvmou.yess.storage.StorageType;
 import cn.yvmou.yess.utils.manager.ListenerManager;
@@ -58,10 +59,13 @@ public final class Y extends JavaPlugin {
             new PapiExpansion(this).register(); //
             LoggerUtils.info(ChatColor.BLUE + "成功挂钩PlaceholderAPI");
         }
-        LoggerUtils.info(ChatColor.GREEN + "插件加载成功！");
         // 检测配置文件是否更新
         checkConfigVersion();
+        // 插件统计
+        new UpdateChecker(this);
+        // 检测插件更新
         Metrics metrics = new Metrics(this, 26229);
+        LoggerUtils.info(ChatColor.GREEN + "插件加载成功！");
     }
 
     @Override

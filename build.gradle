@@ -29,6 +29,7 @@ dependencies {
     compileOnly "org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT"
     compileOnly 'me.clip:placeholderapi:2.11.6'
     implementation("com.github.technicallycoded:FoliaLib:0.4.4")
+    implementation 'org.json:json:20231013'
 }
 
 def targetJavaVersion = 21
