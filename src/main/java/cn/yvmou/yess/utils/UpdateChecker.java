@@ -4,9 +4,11 @@ import cn.yvmou.yess.Y;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class UpdateChecker {
     private final Y plugin;
@@ -44,8 +46,7 @@ public class UpdateChecker {
 
             notify(currentVersion, latestVersion, "https://github.com/yvmouX/YEss/releases/latest");
         } catch (Exception e) {
-            e.printStackTrace();
-            LoggerUtils.warn("GitHub更新检查失败");
+            LoggerUtils.warn("GitHub更新检查失败" + e);
             return false;
         }
         return true;
@@ -53,19 +54,16 @@ public class UpdateChecker {
 
     private boolean checkSpigot() {
         try {
-            URL url = new URL("https://api.spiget.org/v2/resources/" + 126245 + "/versions/latest");
+            InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=126245").openStream();
+            Scanner scanner = new Scanner(inputStream);
+            if (scanner.hasNext()) {
+                String latestVersion = scanner.next();
+                String currentVersion = plugin.getDescription().getVersion();
 
-            String json = new BufferedReader(new InputStreamReader(url.openStream())).lines().reduce((a, b) -> a + b).orElse("{}");
-
-            String latestVersion = new JSONObject(json).getString("name");
-            String currentVersion = plugin.getDescription().getVersion();
-            System.out.println(latestVersion);
-            System.out.println(currentVersion);
-
-            notify(currentVersion, latestVersion, "https://spigotmc.org/resources/126245");
-        } catch (Exception e) {
-            e.printStackTrace();
-            LoggerUtils.warn("Spigot更新检查失败");
+                notify(currentVersion, latestVersion, "https://spigotmc.org/resources/126245");
+            }
+        } catch ( Exception e) {
+            LoggerUtils.warn("Spigot更新检查失败" + e);
             return false;
         }
         return true;
