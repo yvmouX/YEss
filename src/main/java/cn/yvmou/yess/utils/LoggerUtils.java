@@ -32,4 +32,11 @@ public class LoggerUtils {
     public static void error(ChatColor color, String msg) {
         console.sendMessage(CONSOLE_PREFIX + (color == null ? ChatColor.RED : color) + msg);
     }
+
+    public static void error(String msg, Throwable throwable) {
+        error(msg); // 打印错误信息
+        if (throwable != null) {
+            throwable.printStackTrace(); // 打印堆栈跟踪
+        }
+    }
 }
