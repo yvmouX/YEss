@@ -6,6 +6,7 @@ import cn.yvmou.yess.managers.TeamM;
 import cn.yvmou.yess.managers.GlowM;
 import cn.yvmou.yess.storage.Storage;
 import cn.yvmou.yess.utils.LoggerUtils;
+import cn.yvmou.yess.utils.Metrics;
 import cn.yvmou.yess.utils.manager.CommandManager;
 import cn.yvmou.yess.storage.StorageType;
 import cn.yvmou.yess.utils.manager.ListenerManager;
@@ -60,6 +61,7 @@ public final class Y extends JavaPlugin {
         LoggerUtils.info(ChatColor.GREEN + "插件加载成功！");
         // 检测配置文件是否更新
         checkConfigVersion();
+        Metrics metrics = new Metrics(this, 26229);
     }
 
     @Override
