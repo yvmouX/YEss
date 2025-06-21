@@ -1,4 +1,5 @@
 name: 发布Releases
+
 on:
   push:
     branches: [ main ]
@@ -31,19 +32,37 @@ jobs:
           VERSION=$(grep "^version *= *['\"]" build.gradle | head -n1 | sed "s/.*version *= *['\"]\\(.*\\)['\"].*/\\1/")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
+      - name: 检查版本是否已发布
+        id: check_version
+        run: |
+          # 检查 Git 仓库中是否已存在当前版本的标签
+          # 如果存在，说明该版本已经发布过，后续步骤将跳过
+          git fetch --tags --force
+          if git rev-parse "v${{ env.VERSION }}" >/dev/null 2>&1; then
+            echo "版本 v${{ env.VERSION }} 已存在，跳过发布。"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "版本 v${{ env.VERSION }} 是新版本，继续发布。"
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: 确保 gradlew 可执行
+        if: steps.check_version.outputs.skip == 'false'
         run: chmod +x ./gradlew
 
       - name: 构建插件
+        if: steps.check_version.outputs.skip == 'false'
         run: ./gradlew build
 
       - name: 获取当前日期
+        if: steps.check_version.outputs.skip == 'false'
         id: get-date
         run: |
           echo "current-date=$(date '+%Y-%m-%d')" >> $GITHUB_OUTPUT
           echo "current-time=$(date '+%H:%M:%S %Z')" >> $GITHUB_OUTPUT
 
       - name: 获取版本标签
+        if: steps.check_version.outputs.skip == 'false'
         id: get_tags
         run: |
           git fetch --tags
@@ -53,6 +72,7 @@ jobs:
           echo "previous_tag=${previous_tag}" >> $GITHUB_OUTPUT
 
       - name: 自动生成 GitHub 风格的 Release Notes
+        if: steps.check_version.outputs.skip == 'false'
         id: github_release_notes
         uses: actions/github-script@v7
         with:
@@ -66,6 +86,7 @@ jobs:
             core.setOutput('body', response.data.body);
 
       - name: 生成自定义提交日志
+        if: steps.check_version.outputs.skip == 'false'
         id: generate_changelog
         run: |
           repo_url="https://github.com/${{ github.repository }}"
@@ -100,6 +121,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: 发布到 GitHub Releases
+        if: steps.check_version.outputs.skip == 'false'
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
