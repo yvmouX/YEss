@@ -128,6 +128,7 @@ jobs:
           github-tag: "v${{ env.VERSION }}"
           version: "v${{ env.VERSION }}"
           version-type: release
+          github-prerelease: true
           files: build/libs/*.jar
           changelog: |
             # 🚀 Release v${{ env.VERSION }}
