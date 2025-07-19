@@ -1,0 +1,15 @@
+name: YEss
+version: '${version}'
+main: cn.yvmou.yess.Y
+api-version: '1.13'
+prefix: YEss
+authors:
+  - yvmoux
+  - Findoutsider
+description: a basic plugin
+website: www.yvmou.cn
+softdepend: ["PlaceholderAPI"]
+folia-supported: true
+commands:
+  yess:
+    aliases: ye

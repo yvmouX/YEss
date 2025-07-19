@@ -1,0 +1,107 @@
+plugins {
+    id 'java'
+    id("com.gradleup.shadow") version "9.0.0-beta12"
+}
+
+group = 'cn.yvmou'
+version = '1.0.0'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        name = "spigotmc-repo"
+        url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+    }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
+    }
+    maven {
+        url = 'https://repo.extendedclip.com/releases/'
+    }
+//    maven {
+//        name = 'jitpack'
+//        url = 'https://jitpack.io'
+//    }
+}
+
+dependencies {
+    compileOnly "org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT"
+    compileOnly 'me.clip:placeholderapi:2.11.6'
+    implementation 'org.json:json:20231013'
+    implementation 'com.github.yvmouX:YLib:1.0.0-beta2'
+//    implementation files('D://_yvmou/GitHub/minecraft-plugin/_2025Code/YLib/build/libs/YLib-1.0.0-beta1.jar')
+}
+
+def targetJavaVersion = 21
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release.set(targetJavaVersion)
+    }
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+    filesMatching('config.yml') {
+        expand props
+    }
+}
+
+// 禁用标准的 jar 任务（不生成普通 JAR）
+tasks.named('jar') {
+    enabled = false
+}
+
+// 确保 build 任务只依赖 shadowJar
+tasks.named('build') {
+    dependsOn('shadowJar')
+    // 移除对 jar 的默认依赖（可选，因为已经禁用了 jar 任务）
+    dependsOn -= tasks.jar
+}
+
+shadowJar {
+    archiveFileName = "YEss-${version}.jar"
+    // !! MAKE SURE TO CHANGE THIS TO YOUR PLUGIN'S GROUP & PLUGIN NAME !!
+    relocate("com.tcoded.folialib", "cn.yvmou.yess.lib.folialib")
+
+    // Optional: If you use minimize, make sure you exclude FoliaLib
+    // Do not uncomment this if you don't know what you are doing
+    // minimize {
+    //     exclude dependency("com.github.technicallycoded:FoliaLib:.*")
+    // }
+    exclude("org/jetbrains/annotations/**")
+    exclude("org/intellij/lang/annotations/**")
+}
+
+// 构建后将文件复制到服务器插件文件夹
+tasks.register('copy', Copy) {
+    from "build/libs" // 源文件夹, 在这里是构建产物的文件夹=
+    into 'E:/_SERVER/1.21.4/plugins' // 目标文件夹, 在这里是调试服务端的插件文件夹
+    include "YEss-${version}.jar"  // 可选：只复制特定类型的文件,支持正则表达式 在这里只规定该名称的文件可以被复制到目标文件夹 }
+}
+tasks.named('copy').configure {
+    dependsOn(build) // 确保在构建后执行
+}
+tasks.named('copy').configure {
+    dependsOn(tasks.shadowJar) // 确保 shadowJar 在 copy 任务之前执行
+}
+
+
+
