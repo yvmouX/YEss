@@ -1,5 +1,6 @@
 package cn.yvmou.yess;
 
+import cn.yvmou.yess.commands.*;
 import cn.yvmou.yess.managers.GiftM;
 import cn.yvmou.yess.expansion.PapiExpansion;
 import cn.yvmou.yess.managers.TeamM;
@@ -7,7 +8,6 @@ import cn.yvmou.yess.managers.GlowM;
 import cn.yvmou.yess.storage.Storage;
 import cn.yvmou.yess.utils.Metrics;
 import cn.yvmou.yess.utils.UpdateChecker;
-import cn.yvmou.yess.utils.manager.CommandManager;
 import cn.yvmou.yess.storage.StorageType;
 import cn.yvmou.yess.utils.manager.ListenerManager;
 import cn.yvmou.ylib.YLib;
@@ -38,7 +38,17 @@ public final class Y extends JavaPlugin {
         teamM = new TeamM(this, storage);
         glowM = new GlowM(storage);
 
-        new CommandManager(this).registerCommands();
+        getYLib().getCommandManager().registerCommands(
+                "yess",
+                new BanCommand(this),
+                new GiftCommand(this),
+                new GlowCmd(this),
+                new KickCommand(this),
+                new OpenCraftCmd(this),
+                new OpenEnderChestCmd(this),
+                new ReloadCmd(this),
+                new TeamCommand(this)
+        );
         new ListenerManager(this).registerListener();
 
         // HOOK

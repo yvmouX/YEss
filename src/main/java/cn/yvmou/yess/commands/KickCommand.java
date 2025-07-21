@@ -1,8 +1,8 @@
-package cn.yvmou.yess.commands.main.sub;
+package cn.yvmou.yess.commands;
 
 import cn.yvmou.yess.Y;
-import cn.yvmou.yess.commands.SubCommand;
-import cn.yvmou.yess.utils.CommandUtils;
+import cn.yvmou.ylib.api.command.CommandOptions;
+import cn.yvmou.ylib.api.command.SubCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -16,13 +16,12 @@ public class KickCommand implements SubCommand {
     public KickCommand(Y plugin) { this.plugin = plugin; }
 
     @Override
+    @CommandOptions(name = "kick", permission = "yess.command.kick", onlyPlayer = true, alias = {"kick"}, register = true, usage = "/yess kick <player>")
     public boolean execute(CommandSender sender, String[] args) {
-        if (CommandUtils.noPermission(sender, this)) return false;
-
         Player player = (Player) sender;
 
         if (args.length < 2) {
-            player.sendMessage(getUsage());
+            player.sendMessage(Y.getYLib().getCommandConfig().getUsage("yess", "kick"));
             return false;
         }
 
@@ -43,20 +42,5 @@ public class KickCommand implements SubCommand {
         }
 
         return true;
-    }
-
-    @Override
-    public String getUsage() {
-        return "/yess kick <player>";
-    }
-
-    @Override
-    public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("registerCommand.kick.permission", "yess.command.kick");
-    }
-
-    @Override
-    public boolean requireRegister() {
-        return plugin.getConfig().getBoolean("registerCommand.kick.enable", true);
     }
 }

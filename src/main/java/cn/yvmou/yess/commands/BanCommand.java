@@ -1,8 +1,8 @@
-package cn.yvmou.yess.commands.main.sub;
+package cn.yvmou.yess.commands;
 
 import cn.yvmou.yess.Y;
-import cn.yvmou.yess.commands.SubCommand;
-import cn.yvmou.yess.utils.CommandUtils;
+import cn.yvmou.ylib.api.command.CommandOptions;
+import cn.yvmou.ylib.api.command.SubCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -19,13 +19,12 @@ public class BanCommand implements SubCommand {
     public BanCommand(Y plugin) { this.plugin = plugin; }
 
     @Override
+    @CommandOptions(name = "ban", permission = "yess.command.ban", onlyPlayer = false, alias = "ban", register = true, usage = "/yess ban <player> <reason> <expires>")
     public boolean execute(CommandSender sender, String[] args) {
-        if (CommandUtils.noPermission(sender, this)) return false;
-
         Player player = (Player) sender;
 
         if (args.length < 2) {
-            player.sendMessage(getUsage());
+            player.sendMessage(Y.getYLib().getCommandConfig().getUsage("yess", "ban"));
             return false;
         }
 
@@ -50,7 +49,7 @@ public class BanCommand implements SubCommand {
                     banTimeInMillis = Integer.parseInt(expires.toLowerCase().replace("s", "")) * 1000L;
                 }
             } catch (NumberFormatException e) {
-                player.sendMessage(getUsage());
+                player.sendMessage(Y.getYLib().getCommandConfig().getUsage("yess", "ban"));
                 player.sendMessage("§c错误：封禁时间格式不正确！示例: 1d, 2h, 30m, 5000");
             }
 
@@ -63,20 +62,5 @@ public class BanCommand implements SubCommand {
 
         player.ban(args[1], Instant.parse(args[2]), null, true);
         return true;
-    }
-
-    @Override
-    public String getUsage() {
-        return "/yess ban <player> <reason> <expires>";
-    }
-
-    @Override
-    public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("registerCommand.ban.permission", "yess.command.ban");
-    }
-
-    @Override
-    public boolean requireRegister() {
-        return plugin.getConfig().getBoolean("registerCommand.ban.enable", true);
     }
 }

@@ -10,6 +10,3 @@ description: a basic plugin
 website: www.yvmou.cn
 softdepend: ["PlaceholderAPI"]
 folia-supported: true
-commands:
-  yess:
-    aliases: ye

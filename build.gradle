@@ -7,7 +7,7 @@ group = 'cn.yvmou'
 version = '1.0.0'
 
 repositories {
-//    mavenLocal()
+    mavenLocal()
     mavenCentral()
     maven {
         name = "spigotmc-repo"
@@ -30,8 +30,7 @@ dependencies {
     compileOnly "org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT"
     compileOnly 'me.clip:placeholderapi:2.11.6'
     implementation 'org.json:json:20231013'
-    implementation 'com.github.yvmouX:YLib:1.0.0-beta2'
-//    implementation files('D://_yvmou/GitHub/minecraft-plugin/_2025Code/YLib/build/libs/YLib-1.0.0-beta1.jar')
+    implementation 'com.github.yvmouX:YLib:1.0.0-beta3'
 }
 
 def targetJavaVersion = 21
@@ -79,7 +78,7 @@ tasks.named('build') {
 shadowJar {
     archiveFileName = "YEss-${version}.jar"
     // !! MAKE SURE TO CHANGE THIS TO YOUR PLUGIN'S GROUP & PLUGIN NAME !!
-    relocate("com.tcoded.folialib", "cn.yvmou.yess.lib.folialib")
+    relocate("cn.yvmou.ylib", "cn.yvmou.yess.lib.ylib")
 
     // Optional: If you use minimize, make sure you exclude FoliaLib
     // Do not uncomment this if you don't know what you are doing
