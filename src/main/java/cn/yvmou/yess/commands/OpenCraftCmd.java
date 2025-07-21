@@ -1,8 +1,8 @@
-package cn.yvmou.yess.commands.main.sub;
+package cn.yvmou.yess.commands;
 
 import cn.yvmou.yess.Y;
-import cn.yvmou.yess.commands.SubCommand;
-import cn.yvmou.yess.utils.CommandUtils;
+import cn.yvmou.ylib.api.command.CommandOptions;
+import cn.yvmou.ylib.api.command.SubCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -14,9 +14,8 @@ public class OpenCraftCmd implements SubCommand {
     public OpenCraftCmd(Y plugin) { this.plugin = plugin; }
 
     @Override
+    @CommandOptions(name = "craft", permission = "yess.command.craft", onlyPlayer = true, alias = {"craft"}, register = true, usage = "/yess craft <player>")
     public boolean execute(CommandSender sender, String[] args) {
-        if (CommandUtils.noPermission(sender, this)) return false;
-
         if (args.length == 2) {
             Player target = Bukkit.getPlayerExact(args[1]);
             if (target != null) {
@@ -25,25 +24,8 @@ public class OpenCraftCmd implements SubCommand {
             return true;
         }
 
-        if (CommandUtils.noPlayer(sender)) return false;
-
         Player player = (Player) sender;
         player.openWorkbench(null, true);
         return true;
-    }
-
-    @Override
-    public String getUsage() {
-        return "/yess craft <player>";
-    }
-
-    @Override
-    public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("registerCommand.craft.permission", "yess.command.craft");
-    }
-
-    @Override
-    public boolean requireRegister() {
-        return plugin.getConfig().getBoolean("registerCommand.craft.enable", true);
     }
 }

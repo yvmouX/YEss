@@ -1,8 +1,8 @@
-package cn.yvmou.yess.commands.main.sub;
+package cn.yvmou.yess.commands;
 
 import cn.yvmou.yess.Y;
-import cn.yvmou.yess.commands.SubCommand;
-import cn.yvmou.yess.utils.CommandUtils;
+import cn.yvmou.ylib.api.command.CommandOptions;
+import cn.yvmou.ylib.api.command.SubCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Map;
 import java.util.UUID;
 
 public class GlowCmd implements SubCommand {
@@ -19,9 +18,8 @@ public class GlowCmd implements SubCommand {
     public GlowCmd(Y plugin) { this.plugin = plugin; }
 
     @Override
+    @CommandOptions(name = "glow", permission = "yess.command.glow", onlyPlayer = true, alias = {"glow"}, register = true, usage = "/yess glow <player>")
     public boolean execute(CommandSender sender, String[] args) {
-        if (CommandUtils.noPermission(sender, this)) return false;
-
         if (args.length == 2) {
             Player target = Bukkit.getPlayerExact(args[1]);
             if (target != null) {
@@ -30,25 +28,8 @@ public class GlowCmd implements SubCommand {
             return true;
         }
 
-        if (CommandUtils.noPlayer(sender)) return false;
-
         glowToggle((Player) sender);
         return true;
-    }
-
-    @Override
-    public String getUsage() {
-        return "/yess glow <player>";
-    }
-
-    @Override
-    public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("registerCommand.reload.permission", "yess.command.reload");
-    }
-
-    @Override
-    public boolean requireRegister() {
-        return plugin.getConfig().getBoolean("registerCommand.glow.enable", true);
     }
 
     private void glowToggle(Player player) {

@@ -1,8 +1,8 @@
-package cn.yvmou.yess.commands.main.sub;
+package cn.yvmou.yess.commands;
 
 import cn.yvmou.yess.Y;
-import cn.yvmou.yess.commands.SubCommand;
-import cn.yvmou.yess.utils.CommandUtils;
+import cn.yvmou.ylib.api.command.CommandOptions;
+import cn.yvmou.ylib.api.command.SubCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -14,9 +14,8 @@ public class OpenEnderChestCmd implements SubCommand {
     public OpenEnderChestCmd(Y plugin) { this.plugin = plugin; }
 
     @Override
+    @CommandOptions(name = "ec", permission = "yess.command.ec", onlyPlayer = true, alias = {"ec"}, register = true, usage = "/yess ec <player>")
     public boolean execute(CommandSender sender, String[] args) {
-        if (CommandUtils.noPermission(sender, this)) return false;
-
         if (args.length == 2) {
             Player target = Bukkit.getPlayerExact(args[1]);
             if (target != null) {
@@ -25,25 +24,9 @@ public class OpenEnderChestCmd implements SubCommand {
             return true;
         }
 
-        if (CommandUtils.noPlayer(sender)) return false;
-
         Player player = (Player) sender;
         player.openInventory(player.getEnderChest());
         return true;
     }
 
-    @Override
-    public String getUsage() {
-        return "/yess ec <player>";
-    }
-
-    @Override
-    public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("registerCommand.ec.permission", "yess.command.ec");
-    }
-
-    @Override
-    public boolean requireRegister() {
-        return plugin.getConfig().getBoolean("registerCommand.ec.enable", true);
-    }
 }

@@ -1,9 +1,9 @@
-package cn.yvmou.yess.commands.main.sub;
+package cn.yvmou.yess.commands;
 
 import cn.yvmou.yess.Y;
-import cn.yvmou.yess.commands.SubCommand;
 import cn.yvmou.yess.managers.TeamM;
-import cn.yvmou.yess.utils.CommandUtils;
+import cn.yvmou.ylib.api.command.CommandOptions;
+import cn.yvmou.ylib.api.command.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -23,10 +23,8 @@ public class TeamCommand implements SubCommand {
      * @return true if successful, false otherwise
      */
     @Override
+    @CommandOptions(name = "team", permission = "yess.command.team", onlyPlayer = true, alias = {"team"}, register = true, usage = "/yess team help")
     public boolean execute(CommandSender sender, String[] args) {
-        if (CommandUtils.noPlayer(sender)) return false;
-        if (CommandUtils.noPermission(sender, this)) return false;
-
         Player player = (Player) sender;
 
         if (args.length < 2) {
@@ -81,41 +79,10 @@ public class TeamCommand implements SubCommand {
             case "accept" -> teamM.acceptTeam(player);
             case "deny" -> teamM.denyTeam(player);
             case "help" -> sendHelp(player);
-            default -> player.sendMessage(getUsage());
+            default -> player.sendMessage(Y.getYLib().getCommandConfig().getUsage("yess", "team"));
         }
 
         return true;
-    }
-
-    /**
-     * 提供子命令的使用说明
-     *
-     * @return A string representing command usage
-     */
-    @Override
-    public String getUsage() {
-        return "/yess team help";
-    }
-
-    /**
-     * 检查发送者是否有权限使用子命令.
-     *
-     * @param sender The command sender
-     * @return True if the sender has permission
-     */
-    @Override
-    public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("registerCommand.team.permission", "yess.command.team");
-    }
-
-    /**
-     * 是否注册命令
-     *
-     * @return 注册命令返回是，否则否
-     */
-    @Override
-    public boolean requireRegister() {
-        return plugin.getConfig().getBoolean("registerCommand.team.enable", true);
     }
 
     private void sendHelp(Player player) {

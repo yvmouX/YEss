@@ -1,8 +1,8 @@
-package cn.yvmou.yess.commands.main.sub;
+package cn.yvmou.yess.commands;
 
 import cn.yvmou.yess.Y;
-import cn.yvmou.yess.commands.SubCommand;
-import cn.yvmou.yess.utils.CommandUtils;
+import cn.yvmou.ylib.api.command.CommandOptions;
+import cn.yvmou.ylib.api.command.SubCommand;
 import cn.yvmou.ylib.tools.MessageTools;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -28,10 +28,8 @@ public class GiftCommand implements SubCommand {
      * @return true if successful, false otherwise
      */
     @Override
+    @CommandOptions(name = "gift", permission = "yess.command.gift", onlyPlayer = true, alias = {"gift"}, register = true, usage = "/yess gift help")
     public boolean execute(CommandSender sender, String[] args) {
-        if (CommandUtils.noPlayer(sender)) return false;
-        if (CommandUtils.noPermission(sender, this)) return false;
-
         Player player = (Player) sender;
 
         if (args.length < 2) {
@@ -128,41 +126,10 @@ public class GiftCommand implements SubCommand {
                 Y.getGiftM().deleteGift(giftName, player);
             }
             case "help" -> sendHelp(player);
-            default -> sender.sendMessage(getUsage());
+            default -> sender.sendMessage(Y.getYLib().getCommandConfig().getUsage("yess", "gift"));
         }
 
         return true;
-    }
-
-    /**
-     * 提供子命令的使用说明
-     *
-     * @return A string representing command usage
-     */
-    @Override
-    public String getUsage() {
-        return "/yess gift help";
-    }
-
-    /**
-     * 检查发送者是否有权限使用子命令.
-     *
-     * @param sender The command sender
-     * @return True if the sender has permission
-     */
-    @Override
-    public String requirePermission(CommandSender sender) {
-        return plugin.getConfig().getString("registerCommand.gift.permission", "yess.command.gift");
-    }
-
-    /**
-     * 是否注册命令
-     *
-     * @return 注册命令返回是，否则否
-     */
-    @Override
-    public boolean requireRegister() {
-        return plugin.getConfig().getBoolean("registerCommand.gift.enable", true);
     }
 
     private void sendHelp(Player player) {
